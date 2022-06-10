@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
       type: 'better-sqlite3',
       database: ':memory:',
       entities: [User],
+      synchronize: true,
     }),
     UsersModule,
   ],
