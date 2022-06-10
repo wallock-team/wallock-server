@@ -23,6 +23,11 @@ Then user should receive successful response`, async () => {
         username: 'johndoe',
         password: '12345',
       })
-      .expect(201);
+      .expect(201)
+      .expect({
+        username: 'johndoe',
+        password: '12345',
+        id: 1,
+      });
   });
 });
