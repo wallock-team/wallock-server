@@ -80,7 +80,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo 'Husky called'"
+      "pre-commit": "npm run format"
     }
   }
 }
