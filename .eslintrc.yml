@@ -67,6 +67,10 @@ rules:
   use-isnan: error
   valid-typeof: error
 
+  # TypeScript
+
+  '@typescript-eslint/no-unused-vars': error
+
   # LAYOUT & FORMATTING
   # https://eslint.org/docs/rules/#layout-formatting
 
