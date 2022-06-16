@@ -1,5 +1,3 @@
-import fs from 'fs'
-
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
