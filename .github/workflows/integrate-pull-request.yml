@@ -5,14 +5,32 @@ on:
     branches: [main]
 
 jobs:
-  test:
-    name: Run tests
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
     steps:
+      -
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 18
       - run: npm ci
+
+  lint:
+    name: Lint code
+
+    needs: [setup]
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: npm run lint
+
+  test:
+    name: Run tests
+
+    needs: [setup]
+    runs-on: ubuntu-latest
+
+    steps:
       - run: npm run test:e2e
       - run: npm run build

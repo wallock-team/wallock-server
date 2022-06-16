@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { User } from './users/entities/user.entity';
-import { UsersModule } from './users/users.module';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { User } from './users/entities/user.entity'
+import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
@@ -11,11 +11,11 @@ import { UsersModule } from './users/users.module';
       type: 'better-sqlite3',
       database: ':memory:',
       entities: [User],
-      synchronize: true,
+      synchronize: true
     }),
-    UsersModule,
+    UsersModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}
