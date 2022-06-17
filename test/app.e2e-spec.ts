@@ -49,14 +49,14 @@ async function startServerProcess() {
 }
 
 async function waitForServerInit() {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>((resolve, _reject) => {
     const interval = setInterval(() => {
       Axios.get('http://localhost:3000')
         .then(() => {
           clearInterval(interval)
           resolve()
         })
-        .catch(error => {})
+        .catch(_error => {})
     }, 1_000)
   })
 }

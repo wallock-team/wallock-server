@@ -68,10 +68,12 @@ rules:
 
   # TypeScript
 
-  '@typescript-eslint/no-unused-vars': error
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - argsIgnorePattern: ^_
   '@typescript-eslint/no-use-before-define':
     - error
-    - function: false
+    - functions: false
       typedefs: false
 
   # LAYOUT & FORMATTING
