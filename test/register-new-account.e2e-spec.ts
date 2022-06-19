@@ -25,36 +25,10 @@ describe('Register new account', () => {
       })
       .expect(201)
       .expect({
-        username: 'johndoe',
-        id: 1,
-      });
-  });
-
-  it(`When user registers new account with an username and a password
-  But the username already be taken. Then user should receive error response`, async () => {
-    return request(app.getHttpServer())
-      .post('/users')
-      .send({
-        username: 'johndoe',
-        password: '12345',
-      })
-      .expect(409)
-      .expect({
-        mess: "Email or UserName is taken"
-      });
-  });
-
-  it(`When user registers new account with an username and a password
-  But the username are null or undentified. Then user should receive error response`, async () => {
-    return request(app.getHttpServer())
-      .post('/users')
-      .send({
-        username: null,
-        password: '12345',
-      })
-      .expect(400)
-      .expect({
-        mess: "Invalid data"
+        "statusCode": 201,
+        "message": [
+          "username: johndoe"
+        ]
       });
   });
 });
