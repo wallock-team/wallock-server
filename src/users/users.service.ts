@@ -26,7 +26,7 @@ export class UsersService {
       await this.userRepository.save(createUserDto)
       return {
         statusCode: 201,
-        message: ['username: ' + createUserDto.username]
+        message: { username: createUserDto.username }
       }
     }
   }
