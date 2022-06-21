@@ -14,12 +14,11 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     if ((await this.findOne(createUserDto.username))) {
-      const errorMessage = new HttpException({
+      throw new HttpException({
         statusCode: HttpStatus.CONFLICT,
         message: ['Email Already Be Taken'],
         error: "Conflict Error"
-      }, HttpStatus.CONFLICT);
-      return (errorMessage.getResponse())
+      }, HttpStatus.CONFLICT)
     }
     else {
       await this.userRepository.save(createUserDto)
