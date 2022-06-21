@@ -1,8 +1,6 @@
-import { Controller, Post, Body, Get, UseFilters } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { HttpExceptionFilter } from '../http-exception.filter'
-import { CreateUserDto } from './dto/create-user.dto' 
-//line createdUserDto: CreateUserDto it will auto validate the data 
+import { Controller, Post, Body, Get } from '@nestjs/common'
+import { UsersService } from './users.service'
+import { CreateUserDto } from './dto/create-user.dto'
 
 @Controller('users')
 export class UsersController {
@@ -15,6 +13,6 @@ export class UsersController {
 
   @Get()
   async findALl() {
-    return await this.usersService.findAll();;
+    return await this.usersService.findAll()
   }
 }

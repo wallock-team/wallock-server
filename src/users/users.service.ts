@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, Res } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
@@ -10,30 +10,32 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    if ((await this.findOne(createUserDto.username))) {
-      throw new HttpException({
-        statusCode: HttpStatus.CONFLICT,
-        message: ['Email Already Be Taken'],
-        error: "Conflict Error"
-      }, HttpStatus.CONFLICT)
-    }
-    else {
+    if (await this.findOne(createUserDto.username)) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.CONFLICT,
+          message: ['Email Already Be Taken'],
+          error: 'Conflict Error'
+        },
+        HttpStatus.CONFLICT
+      )
+    } else {
       await this.userRepository.save(createUserDto)
-      return ({
+      return {
         statusCode: 201,
-        message: ['username: ' + createUserDto.username],
-      });
+        message: ['username: ' + createUserDto.username]
+      }
     }
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find()
   }
 
   async findOne(username: string): Promise<User> {
-    return this.userRepository.findOne({ where: { username: username } });
+    return this.userRepository.findOne({ where: { username: username } })
   }
 }
