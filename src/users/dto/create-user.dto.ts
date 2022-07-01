@@ -1,12 +1,17 @@
 import { IsDefined, IsNotEmpty } from 'class-validator'
 
 export class CreateUserDto {
-  //U can customize the display of validate codition and message using anotation.
+  /**
+   * @example 'johndoe'
+   */
   @IsNotEmpty({
-    message: 'User can not be empty. Pls enter correctly',
+    message: 'Usename can not be empty'
   })
   username: string
 
+  /**
+   * @example T#1s is a $trong p@55w0rd!
+   */
   @IsDefined()
   password: string
 }
