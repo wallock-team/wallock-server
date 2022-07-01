@@ -10,9 +10,9 @@ async function bootstrap() {
     .setTitle('Wallock Swagger API')
     .setDescription('This document include all Wallock Swagger API')
     .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+    .build()
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('api', app, document)
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }))
   await app.listen(process.env.PORT || 3000)
