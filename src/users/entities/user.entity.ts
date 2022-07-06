@@ -6,8 +6,17 @@ export class User {
   id: number
 
   @Column()
-  username: string
+  firstName: string
+
+  @Column()
+  lastName: string
+
+  @Column()
+  email: string
 
   @Column()
   password: string
+
+  @Column()
+  googleId: string
 }
