@@ -7,23 +7,29 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 
+import { UsersService } from '../users/users.service'
 import { LoginGuard } from './login.guard'
 import { Issuer } from 'openid-client'
+import { CreateUserDto } from 'src/users/dto/create-user.dto'
 
 @Controller()
 export class AuthController {
+  constructor(private readonly usersService: UsersService) {}
+
   @UseGuards(LoginGuard)
   @Get('/login')
   login() {}
 
   @Get('/user')
-  user(@Request() req) {
+  async user(@Request() req) {
     return req.user
   }
 
   @UseGuards(LoginGuard)
   @Get('/callback')
-  loginCallback(@Res() res: Response) {
+  async loginCallback(@Res() res: Response) {
+    const result  = await this.usersService.create(<CreateUserDto>res.req.user)
+    console.log(result)
     res.redirect('/')
   }
 

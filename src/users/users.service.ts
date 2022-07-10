@@ -1,8 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { CreateUserDto } from './dto/create-user.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
 
 @Injectable()
@@ -13,20 +15,20 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (await this.findOne(createUserDto.username)) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.CONFLICT,
-          message: ['Email Already Be Taken'],
-          error: 'Conflict Error'
-        },
-        HttpStatus.CONFLICT
-      )
-    } else {
-      await this.userRepository.save(createUserDto)
+    const exist_user = await this.userRepository.findOne({ where: { sub: createUserDto.sub } })
+    if (exist_user) {
       return {
         statusCode: 201,
-        data: { username: createUserDto.username }
+        message: "Login in existed Email.",
+        data: { username: createUserDto.username, id: exist_user.id
+        }
+      }
+    } else {
+      const new_user = await this.userRepository.save(createUserDto)
+      return {
+        statusCode: 201,
+        message: "Login and create new user success",
+        data: { username: new_user.username, id: new_user.id }
       }
     }
   }
@@ -35,7 +37,21 @@ export class UsersService {
     return await this.userRepository.find()
   }
 
-  async findOne(username: string): Promise<User> {
-    return this.userRepository.findOne({ where: { username: username } })
+  async findOne(id: number): Promise<User> {
+    return this.userRepository.findOne({ where: { id: id } })
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    const find_user = await this.userRepository.findOne({ where: { id: id } })
+    if(find_user){
+      await this.userRepository.update(find_user.id, updateUserDto)
+      return {
+        statusCode: 201,
+        message: "Update successfully."
+      } 
+    }return {
+      statusCode: 404,
+      message: "Can't find user."
+    }
   }
 }

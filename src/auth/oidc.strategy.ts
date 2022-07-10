@@ -3,6 +3,9 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy, Client, UserinfoResponse, TokenSet, Issuer } from 'openid-client'
 import { AuthService } from './auth.service'
 
+import { CreateUserDto } from '../users/dto/create-user.dto'
+import { UsersService } from 'src/users/users.service'
+
 export const buildOpenIdClient = async () => {
   const TrustIssuer = await Issuer.discover(`${process.env.OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER}/.well-known/openid-configuration`)
   const client = new TrustIssuer.Client({
@@ -29,19 +32,21 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     this.client = client
   }
 
-  async validate(tokenset: TokenSet): Promise<any> {
+  async validate(tokenset: TokenSet, usersService: UsersService): Promise<any> {
     const userinfo: UserinfoResponse = await this.client.userinfo(tokenset)
 
     try {
-      const id_token = tokenset.id_token
-      const access_token = tokenset.access_token
-      const refresh_token = tokenset.refresh_token
-      const user = {
-        id_token,
-        access_token,
-        refresh_token,
-        userinfo
-      }
+      const [header, payload, signature] = tokenset.id_token.split('.');
+      
+      const decodedPayload = Buffer.from(payload, 'base64').toString();
+      const Payload = JSON.parse(decodedPayload);
+
+      const user : CreateUserDto = new CreateUserDto();
+      user.sub = Payload.sub;
+      user.iss = Payload.iss;  
+      user.username = Payload.name;
+      user.picture = Payload.picture;
+
       return user
     } catch (err) {
       throw new UnauthorizedException()
