@@ -1,7 +1,6 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -15,21 +14,19 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const exist_user = await this.userRepository.findOne({ where: { sub: createUserDto.sub } })
-    if (exist_user) {
-      return {
-        statusCode: 201,
-        message: "Login in existed Email.",
-        data: { username: createUserDto.username, id: exist_user.id
-        }
+    const user = await this.userRepository.findOne({
+      where: {
+        iss: createUserDto.iss,
+        sub: createUserDto.sub
       }
+    })
+
+    if (user) {
+      throw new ConflictException(
+        `User with iss '${createUserDto.iss}' and sub '${createUserDto.sub}' is already created`
+      )
     } else {
-      const new_user = await this.userRepository.save(createUserDto)
-      return {
-        statusCode: 201,
-        message: "Login and create new user success",
-        data: { username: new_user.username, id: new_user.id }
-      }
+      return this.userRepository.save(createUserDto)
     }
   }
 
@@ -37,19 +34,24 @@ export class UsersService {
     return await this.userRepository.find()
   }
 
-  async findOne(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id: id } })
+  async find(options?: FindManyOptions<User>): Promise<User[]> {
+    return this.userRepository.find(options)
+  }
+
+  async findOne(options?: FindOneOptions<User>): Promise<User> {
+    return this.userRepository.findOne(options)
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto) {
     const find_user = await this.userRepository.findOne({ where: { id: id } })
-    if(find_user){
+    if (find_user) {
       await this.userRepository.update(find_user.id, updateUserDto)
       return {
         statusCode: 201,
-        message: "Update successfully."
-      } 
-    }return {
+        message: 'Update successfully.'
+      }
+    }
+    return {
       statusCode: 404,
       message: "Can't find user."
     }
