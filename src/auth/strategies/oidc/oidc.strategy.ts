@@ -1,5 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport'
-import { Client, Issuer, Strategy } from 'openid-client'
+import { Client, Issuer, Strategy, TokenSet } from 'openid-client'
+import AuthService from 'src/auth/auth.service'
+import { User } from 'src/users/entities/user.entity'
 import GoogleMetadata from './issuer/google.metadata'
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
@@ -12,7 +14,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     })
   }
 
-  constructor() {
+  constructor(private authService: AuthService) {
     super({
       client: OidcStrategy.setupGoogleClient(),
       params: {
@@ -21,5 +23,11 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     })
   }
 
-  async validate(): Promise<any> {}
+  async validate(
+    tokenSet: TokenSet,
+    done: (err: any, user?: User) => void
+  ): Promise<void> {
+    const user = await this.authService.validateUser(tokenSet)
+    done(null, user)
+  }
 }

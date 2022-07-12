@@ -19,11 +19,15 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOne({
+      where: {
+        id: id
+      }
+    })
   }
 
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(id, updateUserDto);
+    return this.usersService.updateUser(id, updateUserDto)
   }
 }
