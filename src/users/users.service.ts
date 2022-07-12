@@ -19,16 +19,17 @@ export class UsersService {
     if (exist_user) {
       return {
         statusCode: 201,
-        message: "Login in existed Email.",
-        data: { username: createUserDto.username, id: exist_user.id
-        }
+        message: 'Login in existed Email.',
+        data: { username: createUserDto.username,
+id: exist_user.id }
       }
     } else {
       const new_user = await this.userRepository.save(createUserDto)
       return {
         statusCode: 201,
-        message: "Login and create new user success",
-        data: { username: new_user.username, id: new_user.id }
+        message: 'Login and create new user success',
+        data: { username: new_user.username,
+id: new_user.id }
       }
     }
   }
@@ -43,15 +44,15 @@ export class UsersService {
 
   async updateUser(id: number, updateUserDto: UpdateUserDto) {
     const find_user = await this.userRepository.findOne({ where: { id: id } })
-    if(find_user){
+    if (find_user) {
       await this.userRepository.update(find_user.id, updateUserDto)
       return {
         statusCode: 201,
-        message: "Update successfully."
-      } 
-    }return {
+        message: 'Update successfully.'
+      }
+    } return {
       statusCode: 404,
-      message: "Can't find user."
+      message: 'Can\'t find user.'
     }
   }
 }

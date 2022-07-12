@@ -28,8 +28,8 @@ export class AuthController {
   @UseGuards(LoginGuard)
   @Get('/callback')
   async loginCallback(@Res() res: Response) {
-    const result  = await this.usersService.create(<CreateUserDto>res.req.user)
-    console.log(result)
+    //const result = await this.usersService.create(<CreateUserDto>res.req.user)
+    //console.log(result)
     res.redirect('/')
   }
 

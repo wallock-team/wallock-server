@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 @Entity()
-@Unique(["iss", "sub"])
+@Unique(['iss', 'sub'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number
@@ -17,6 +17,4 @@ export class User {
 
   @Column()
   picture: string
-
-
 }

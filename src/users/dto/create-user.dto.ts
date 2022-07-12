@@ -1,7 +1,6 @@
 import { IsDefined, IsNotEmpty } from 'class-validator'
 
 export class CreateUserDto {
-
   @IsNotEmpty()
   iss: string
 
@@ -13,5 +12,4 @@ export class CreateUserDto {
 
   @IsDefined()
   picture: string
-
 }

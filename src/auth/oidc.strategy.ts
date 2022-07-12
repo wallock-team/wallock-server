@@ -36,18 +36,18 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     const userinfo: UserinfoResponse = await this.client.userinfo(tokenset)
 
     try {
-      const [header, payload, signature] = tokenset.id_token.split('.');
-      
-      const decodedPayload = Buffer.from(payload, 'base64').toString();
-      const Payload = JSON.parse(decodedPayload);
+      const [header, payload, signature] = tokenset.id_token.split('.')
 
-      const user : CreateUserDto = new CreateUserDto();
-      user.sub = Payload.sub;
-      user.iss = Payload.iss;  
-      user.username = Payload.name;
-      user.picture = Payload.picture;
+      const decodedPayload = Buffer.from(payload, 'base64').toString()
+      const Payload = JSON.parse(decodedPayload)
 
-      return user
+      const user : CreateUserDto = new CreateUserDto()
+      user.sub = Payload.sub
+      user.iss = Payload.iss
+      user.username = Payload.name
+      user.picture = Payload.picture
+
+      return {id_token: tokenset.id_token, userinfo: userinfo}
     } catch (err) {
       throw new UnauthorizedException()
     }

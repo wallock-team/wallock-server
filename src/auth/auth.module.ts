@@ -5,6 +5,7 @@ import { SessionSerializer } from './session.serializer'
 import { AuthService } from './auth.service'
 import { AuthController } from './auth.controller'
 import { UsersModule } from 'src/users/users.module'
+import { JwtStrategy } from './jwt.statergy'
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
@@ -25,6 +26,6 @@ const OidcStrategyFactory = {
     UsersModule
   ],
   controllers: [AuthController],
-  providers: [OidcStrategyFactory, SessionSerializer, AuthService]
+  providers: [OidcStrategyFactory, SessionSerializer, AuthService, JwtStrategy]
 })
 export class AuthModule {}

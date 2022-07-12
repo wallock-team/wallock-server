@@ -1,35 +1,36 @@
-// import { Injectable } from '@nestjs/common/decorators'
-// import { PassportStrategy } from '@nestjs/passport'
-// import { Strategy } from 'openid-client'
-// import { ExtractJwt } from 'passport-jwt'
-// import * as dotenv from 'dotenv'
+import { Injectable } from '@nestjs/common/decorators'
+import { PassportStrategy } from '@nestjs/passport'
+import { ExtractJwt, Strategy } from 'passport-jwt'
+import * as dotenv from 'dotenv'
+import { UnauthorizedException } from '@nestjs/common'
+import { passportJwtSecret } from 'jwks-rsa'
 
-// dotenv.config()
+dotenv.config()
 
-// @Injectable()
-// export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-//   constructor() {
-//     super({
-//       secretOrKeyProvider: passportJwtSecret({
-//         cache: true,
-//         rateLimit: true,
-//         jwksRequestsPerMinute: 5,
-//         jwksUri: 'KEYS_URI'
-//       }),
-//       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-//       issuer: 'Issuer',
-//       algorithms: ['RS256']
-//     })
-//   }
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  constructor() {
+    super({
+      secretOrKeyProvider: passportJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: 'https://www.googleapis.com/oauth2/v3/certs'
+      }),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      issuer: 'https://accounts.google.com',
+      algorithms: ['RS256']
+    })
+  }
 
-//   async validate(payload: JwtPayloadInterface) {
-//     const { email } = payload
-//     //const user = await this.userRepository.findOne({ email });
+  async validate(payload: any) {
+    const { name } = payload
+    //const user = await this.userRepository.findOne({ email });
 
-//     if (!user || !user.isActive) {
-//       throw new UnauthorizedException()
-//     }
+    if (!name) {
+      throw new UnauthorizedException()
+    }
 
-//     return payload
-//   }
-// }
+    return payload
+  }
+}
