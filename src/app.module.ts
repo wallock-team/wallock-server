@@ -11,14 +11,18 @@ import { AuthController } from './auth/auth.controller'
 import { UsersController } from './users/users.controller'
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: ':memory:',
-      entities: [User],
-      synchronize: true
-    }),
     UsersModule,
     ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      url: process.env.DATABASE_URL,
+      type: 'postgres',
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
     AuthModule
   ],
   controllers: [AppController, AuthController, UsersController],
