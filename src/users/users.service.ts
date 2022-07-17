@@ -53,7 +53,7 @@ export class UsersService {
     }
     return {
       statusCode: 404,
-      message: "Can't find user."
+      message: 'Can\'t find user.'
     }
   }
 }
