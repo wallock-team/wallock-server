@@ -1,12 +1,14 @@
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import * as session from 'express-session'
+import * as cookieParser from 'cookie-parser'
 import * as passport from 'passport'
+import * as session from 'express-session'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalPipes(new ValidationPipe({ transform: true }))
+  app.use(cookieParser())
   app.use(session({
     secret: process.env.SESSION_SECRET, // to sign session id
     resave: false, // will default to false in near future: https://github.com/expressjs/session#resave
