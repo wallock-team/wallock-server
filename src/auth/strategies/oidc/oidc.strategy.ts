@@ -18,7 +18,10 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     super({
       client: OidcStrategy.setupGoogleClient(),
       params: {
-        redirect_uri: process.env.OAUTH2_CLIENT_REGISTRATION_LOGIN_REDIRECT_URI
+        redirect_uri: process.env.OAUTH2_CLIENT_REGISTRATION_LOGIN_REDIRECT_URI,
+        scope: 'openid',
+        response_type: 'id_token',
+        response_mode: 'query'
       }
     })
   }
