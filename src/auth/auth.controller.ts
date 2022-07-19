@@ -1,52 +1,35 @@
-import { Controller, Get, Request, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
+import JwtAuthGuard from './strategies/jwt/jwt-auth.guard'
 
-import { UsersService } from '../users/users.service'
-import { Issuer } from 'openid-client'
-import { CreateUserDto } from 'src/users/dto/create-user.dto'
 import { OidcAuthGuard } from './strategies/oidc/oidc-auth.guard'
 
 @Controller()
 export class AuthController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor() {}
 
   @UseGuards(OidcAuthGuard)
   @Get('/login')
   login() {}
 
-  @Get('/user')
-  async user(@Request() req) {
-    return req.user
+  @Get('/greet')
+  @UseGuards(JwtAuthGuard)
+  async greet() {
+    return 'Hello Wallock!'
   }
 
-  @UseGuards(OidcAuthGuard)
-  @Get('/callback')
-  async loginCallback(@Res() res: Response) {
-    const result = await this.usersService.create(<CreateUserDto>res.req.user)
-    console.log(result)
-    res.redirect('/')
-  }
-
-  @Get('/logout')
-  async logout(@Request() req, @Res() res: Response) {
-    const id_token = req.user ? req.user.id_token : undefined
-    req.logout()
-    req.session.destroy(async (_: any) => {
-      const TrustIssuer = await Issuer.discover(
-        `${process.env.OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER}/.well-known/openid-configuration`
-      )
-      const end_session_endpoint = TrustIssuer.metadata.end_session_endpoint
-      if (end_session_endpoint) {
-        res.redirect(
-          end_session_endpoint +
-            '?post_logout_redirect_uri=' +
-            process.env
-              .OAUTH2_CLIENT_REGISTRATION_LOGIN_POST_LOGOUT_REDIRECT_URI +
-            (id_token ? '&id_token_hint=' + id_token : '')
-        )
-      } else {
-        res.redirect('/')
-      }
-    })
+  @Post('/callback')
+  async loginCallback(
+    @Body('id_token')
+    idToken: string,
+    @Res()
+    res: Response
+  ) {
+    if (idToken) {
+      res.cookie('id_token', idToken)
+      res.redirect('/')
+    } else {
+      res.redirect('/login')
+    }
   }
 }
