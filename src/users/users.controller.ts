@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { AuthGuard } from '@nestjs/passport'
 
+@Injectable()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -13,7 +14,6 @@ export class UsersController {
     return await this.usersService.create(createUserDto)
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findALl() {
     return await this.usersService.findAll()

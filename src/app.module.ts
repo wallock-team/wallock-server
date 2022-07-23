@@ -11,19 +11,19 @@ import { AuthController } from './auth/auth.controller'
 import { UsersController } from './users/users.controller'
 @Module({
   imports: [
-    UsersModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       url: process.env.DATABASE_URL,
       type: 'postgres',
       ssl: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: false
       },
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
     }),
-    AuthModule
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController, AuthController, UsersController],
   providers: [AppService, UsersModule],
