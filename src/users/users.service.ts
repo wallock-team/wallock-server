@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
     const exist_user = await this.userRepository.findOne({ where: { sub: createUserDto.sub } })
@@ -20,16 +20,20 @@ export class UsersService {
       return {
         statusCode: 201,
         message: 'Login in existed Email.',
-        data: { username: createUserDto.username,
-id: exist_user.id }
+        data: {
+          username: createUserDto.username,
+          id: exist_user.id
+        }
       }
     } else {
       const new_user = await this.userRepository.save(createUserDto)
       return {
         statusCode: 201,
         message: 'Login and create new user success',
-        data: { username: new_user.username,
-id: new_user.id }
+        data: {
+          username: new_user.username,
+          id: new_user.id
+        }
       }
     }
   }

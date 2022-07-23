@@ -1,88 +1,47 @@
-import * as Newman from 'newman'
-import * as Pm2 from 'pm2'
-import Axios from 'axios'
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from './../src/app.module';
+import { UsersController } from '../src/users/users.controller';
+import { UsersService } from '../src/users/users.service';
+describe('Test add new User', () => {
+  let app: INestApplication;
+  let userController: UsersController;
+  //let userService: UserService;
+  let userService = { findAll: () => 'test' };
+  let outPutMessage = 'test'
 
-it('Postman test', async () => {
-  try {
-    await startTestApp()
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })      
+      // .overrideProvider(userService)
+      // .useValue(userService)
+      .compile();
 
-    const summary = await runPostmanCollection()
+    // userService = new UserService();
+    // userController = new UserController(userService);
 
-    await stopTestApp()
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+  afterEach(async () => {
 
-    if (summary.run.failures.length) {
-      throw new Error(
-        'Postman finished with error(s). View the summary above for details.'
-      )
-    }
-  } catch (error) {
-    throw error
-  }
-}, 30_000)
+  });
 
-async function startTestApp() {
-  await startServerProcess()
-  console.info('Server process has started')
+  it('/ (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/')
+      .expect(200)
+      .expect('Hello World!');
+  });
 
-  const initStartTime = Date.now()
-  await waitForServerInit()
-  const initTimeInSeconds = (Date.now() - initStartTime) / 1_000
-  console.info(`Server took ${initTimeInSeconds} seconds to init`)
-}
-
-async function startServerProcess() {
-  return new Promise<Pm2.Proc>((resolve, reject) => {
-    Pm2.start(
-      {
-        name: 'app',
-        script: 'npm run start:dev'
-      },
-      (err, proc) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(proc)
-        }
-      }
-    )
-  })
-}
-
-async function waitForServerInit() {
-  return new Promise<void>((resolve, _reject) => {
-    const interval = setInterval(() => {
-      Axios.get('http://localhost:3000')
-        .then(() => {
-          clearInterval(interval)
-          resolve()
-        })
-        .catch(_error => {})
-    }, 1_000)
-  })
-}
-
-async function runPostmanCollection(): Promise<Newman.NewmanRunSummary> {
-  return new Promise<Newman.NewmanRunSummary>((resolve, reject) => {
-    Newman.run(
-      {
-        collection: './test/wallock-server.postman_collection.json',
-        reporters: 'cli'
-      },
-      (error, summary) => {
-        if (error) reject(error)
-        else resolve(summary)
-      }
-    )
-  })
-}
-
-async function stopTestApp() {
-  return new Promise<Pm2.Proc>((resolve, reject) => {
-    Pm2.delete('app', (err, proc) => {
-      Pm2.disconnect()
-      console.info('Server process has stopped')
-      if (err) reject(err)
-      else resolve(proc)
-    })
-  })
-}
+  it('UNit test Get all users',async () => {
+    return request(app.getHttpServer())
+      .get('/user')
+      .expect(200)
+      .expect({
+        message: userService.findAll(),
+      });
+  });
+});

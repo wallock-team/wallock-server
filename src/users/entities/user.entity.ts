@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { Column, Double, Entity, PrimaryColumnCannotBeNullableError, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 @Entity()
 @Unique(['iss', 'sub'])
@@ -17,4 +17,10 @@ export class User {
 
   @Column()
   picture: string
+
+  @Column()
+  balance: Number
+  
+  @Column()
+  test_234: Number
 }

@@ -33,6 +33,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "picture", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], User.prototype, "balance", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], User.prototype, "test_234", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)(),
     (0, typeorm_1.Unique)(['iss', 'sub'])

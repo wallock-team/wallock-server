@@ -3,4 +3,6 @@ export declare class CreateUserDto {
     sub: string;
     username: string;
     picture: string;
+    balance: Number;
+    test_234: Number;
 }

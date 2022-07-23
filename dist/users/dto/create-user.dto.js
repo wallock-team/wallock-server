@@ -29,5 +29,13 @@ __decorate([
     (0, class_validator_1.IsDefined)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "picture", void 0);
+__decorate([
+    (0, class_validator_1.IsDefined)(),
+    __metadata("design:type", Number)
+], CreateUserDto.prototype, "balance", void 0);
+__decorate([
+    (0, class_validator_1.IsDefined)(),
+    __metadata("design:type", Number)
+], CreateUserDto.prototype, "test_234", void 0);
 exports.CreateUserDto = CreateUserDto;
 //# sourceMappingURL=create-user.dto.js.map

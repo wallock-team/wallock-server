@@ -27,8 +27,10 @@ let UsersService = class UsersService {
             return {
                 statusCode: 201,
                 message: 'Login in existed Email.',
-                data: { username: createUserDto.username,
-                    id: exist_user.id }
+                data: {
+                    username: createUserDto.username,
+                    id: exist_user.id
+                }
             };
         }
         else {
@@ -36,8 +38,10 @@ let UsersService = class UsersService {
             return {
                 statusCode: 201,
                 message: 'Login and create new user success',
-                data: { username: new_user.username,
-                    id: new_user.id }
+                data: {
+                    username: new_user.username,
+                    id: new_user.id
+                }
             };
         }
     }

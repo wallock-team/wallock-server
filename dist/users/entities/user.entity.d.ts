@@ -4,4 +4,6 @@ export declare class User {
     sub: string;
     username: string;
     picture: string;
+    balance: Number;
+    test_234: Number;
 }
