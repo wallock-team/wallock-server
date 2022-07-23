@@ -20,7 +20,5 @@ export class User {
 
   @Column()
   balance: Number
-  
-  @Column()
-  test_234: Number
+
 }

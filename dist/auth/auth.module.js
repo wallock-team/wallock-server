@@ -36,7 +36,7 @@ AuthModule = __decorate([
             users_module_1.UsersModule
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [OidcStrategyFactory, session_serializer_1.SessionSerializer, auth_service_1.AuthService, jwt_statergy_1.JwtStrategy]
+        providers: [OidcStrategyFactory, session_serializer_1.SessionSerializer, auth_service_1.AuthService, jwt_statergy_1.JwtStrategy, users_module_1.UsersModule]
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;

@@ -2,31 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { UsersController } from '../src/users/users.controller';
-import { UsersService } from '../src/users/users.service';
-describe('Test add new User', () => {
+
+const SECONDS = 1000
+jest.setTimeout(70* SECONDS);
+describe('AppController (e2e)', () => {
   let app: INestApplication;
-  let userController: UsersController;
-  //let userService: UserService;
-  let userService = { findAll: () => 'test' };
-  let outPutMessage = 'test'
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })      
-      // .overrideProvider(userService)
-      // .useValue(userService)
-      .compile();
-
-    // userService = new UserService();
-    // userController = new UserController(userService);
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
-  });
-  afterEach(async () => {
-
   });
 
   it('/ (GET)', () => {
@@ -36,12 +24,12 @@ describe('Test add new User', () => {
       .expect('Hello World!');
   });
 
-  it('UNit test Get all users',async () => {
-    return request(app.getHttpServer())
-      .get('/user')
-      .expect(200)
-      .expect({
-        message: userService.findAll(),
-      });
-  });
+  describe('Categorise Unit Test',() =>{
+    it('Post to create new categories', () => {
+      return request(app.getHttpServer())
+        .post('/categories')
+        .expect(201)
+        .expect('This action adds a new category');
+    });
+  })
 });
