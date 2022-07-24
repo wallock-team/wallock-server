@@ -9,37 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.BaseEntity = void 0;
 const typeorm_1 = require("typeorm");
-let User = class User {
+let BaseEntity = class BaseEntity {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], User.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], User.prototype, "iss", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], User.prototype, "sub", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], User.prototype, "username", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], User.prototype, "picture", void 0);
+], BaseEntity.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], User.prototype, "balance", void 0);
-User = __decorate([
-    (0, typeorm_1.Entity)(),
-    (0, typeorm_1.Unique)(['iss', 'sub'])
-], User);
-exports.User = User;
-//# sourceMappingURL=user.entity.js.map
+], BaseEntity.prototype, "is_deleted", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    __metadata("design:type", Date)
+], BaseEntity.prototype, "create_at", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], BaseEntity.prototype, "name", void 0);
+BaseEntity = __decorate([
+    (0, typeorm_1.Entity)()
+], BaseEntity);
+exports.BaseEntity = BaseEntity;
+//# sourceMappingURL=base.entity.js.map

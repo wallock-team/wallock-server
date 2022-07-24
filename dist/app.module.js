@@ -36,7 +36,8 @@ AppModule = __decorate([
             auth_module_1.AuthModule
         ],
         controllers: [app_controller_1.AppController, auth_controller_1.AuthController, users_controller_1.UsersController],
-        providers: [app_service_1.AppService]
+        providers: [app_service_1.AppService, users_module_1.UsersModule],
+        exports: [users_module_1.UsersModule]
     })
 ], AppModule);
 exports.AppModule = AppModule;
