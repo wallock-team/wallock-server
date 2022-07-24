@@ -1,10 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import * as dotenv from 'dotenv'
+import { Request } from 'express'
 import { passportJwtSecret } from 'jwks-rsa'
-
-dotenv.config()
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -17,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         jwksUri: 'https://www.googleapis.com/oauth2/v3/certs'
       }),
       jwtFromRequest: ExtractJwt.fromExtractors([
-        function fromCookie(req) {
+        function fromCookie(req: Request): string | null {
           return req.cookies.id_token
         }
       ]),
