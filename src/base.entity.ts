@@ -5,13 +5,10 @@ export class BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
+  @Column({default: 0})
   is_deleted: number
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, default: new Date() })
   create_at: Date
-
-  @Column()
-  name: string
 
 }
