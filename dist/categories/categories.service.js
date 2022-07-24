@@ -10,19 +10,71 @@ exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 let CategoriesService = class CategoriesService {
     create(createCategoryDto) {
-        return 'This action adds a new category';
+        return {
+            name: "Home",
+            isExpense: 0,
+            tier: 0,
+            icon: "home Icon",
+            parentID: null,
+            uID: 1,
+            cateID: 1
+        };
     }
-    findAll() {
-        return `This action returns all categories`;
+    findAll(id) {
+        return {
+            status_code: 201,
+            data: [
+                {
+                    name: "C Home",
+                    isExpense: "out come",
+                    tier: 0,
+                    icon: "Cuong Home Icon",
+                    cateID: "123",
+                    children: [
+                        {
+                            name: "C Home",
+                            is_expense: "out come",
+                            tier: 1,
+                            icon: "Some icon"
+                        }
+                    ]
+                }
+            ]
+        };
     }
     findOne(id) {
-        return `This action returns a #${id} category`;
+        return {
+            status_code: 201,
+            data: {
+                name: 'C Home',
+                isExpense: 0,
+                tier: 0,
+                icon: "Cuong Home Icon",
+                parentID: null,
+                uID: 1,
+                cateID: 1
+            }
+        };
     }
-    update(id, updateCategoryDto) {
-        return `This action updates a #${id} category`;
+    update(updateCategoryDto) {
+        return {
+            status_code: 201,
+            data: {
+                name: 'C Home',
+                isExpense: 0,
+                tier: 0,
+                icon: "Cuong Home Icon",
+                parentID: null,
+                uID: 1,
+                cateID: 1
+            }
+        };
     }
     remove(id) {
-        return `This action removes a #${id} category`;
+        return {
+            status_code: 201,
+            message: "delete categories success"
+        };
     }
 };
 CategoriesService = __decorate([

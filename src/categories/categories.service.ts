@@ -6,8 +6,6 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoriesService {
   create(createCategoryDto: CreateCategoryDto) {
     return {
-      status_code: 201,
-      data: {
         name: "Home",
         isExpense: 0,
         tier: 0,
@@ -15,7 +13,6 @@ export class CategoriesService {
         parentID: null,
         uID : 1,
         cateID: 1
-      }
     };
   }
 

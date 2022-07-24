@@ -8,8 +8,8 @@ export class BaseEntity {
   @Column()
   is_deleted: number
 
-  @Column()
-  create_at: Timestamp
+  @Column({ type: 'timestamp', nullable: true })
+  create_at: Date
 
   @Column()
   name: string

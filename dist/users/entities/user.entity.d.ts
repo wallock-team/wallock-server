@@ -5,5 +5,4 @@ export declare class User {
     username: string;
     picture: string;
     balance: Number;
-    test_234: Number;
 }
