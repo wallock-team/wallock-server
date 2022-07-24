@@ -1,14 +1,13 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
-import JwtAuthGuard from './strategies/jwt/jwt-auth.guard'
-
-import { OidcAuthGuard } from './strategies/oidc/oidc-auth.guard'
+import JwtAuthGuard from './jwt-auth.guard'
+import GoogleOidcAuthGuard from './google-oidc-auth.guard'
 
 @Controller()
 export class AuthController {
   constructor() {}
 
-  @UseGuards(OidcAuthGuard)
+  @UseGuards(GoogleOidcAuthGuard)
   @Get('/login')
   login() {}
 

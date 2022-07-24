@@ -1,12 +1,12 @@
 import { PassportStrategy } from '@nestjs/passport'
 import { Client, Issuer, Strategy, TokenSet } from 'openid-client'
-import AuthService from 'src/auth/auth.service'
 import { User } from 'src/users/entities/user.entity'
-import GoogleMetadata from './issuer/google.metadata'
+import AuthService from './auth.service'
+import googleIssuerMetadata from './google-oidc-issuer-metadata'
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   private static setupGoogleClient(): Client {
-    const googleIssuer = new Issuer(GoogleMetadata)
+    const googleIssuer = new Issuer(googleIssuerMetadata)
 
     return new googleIssuer.Client({
       client_id: process.env.GOOGLE_OAUTH20_CLIENT_ID,
