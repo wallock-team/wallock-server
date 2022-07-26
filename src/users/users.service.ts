@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -18,22 +18,15 @@ export class UsersService {
     const exist_user = await this.userRepository.findOne({ where: { sub: createUserDto.sub } })
     if (exist_user) {
       return {
-        statusCode: 201,
-        message: 'Login in existed Email.',
-        data: {
-          username: createUserDto.username,
-          id: exist_user.id
-        }
+        username: createUserDto.username,
+        picture: exist_user.picture
       }
+
     } else {
       const new_user = await this.userRepository.save(createUserDto)
       return {
-        statusCode: 201,
-        message: 'Login and create new user success',
-        data: {
-          username: new_user.username,
-          id: new_user.id
-        }
+        username: new_user.username,
+        picture: new_user.picture
       }
     }
   }
@@ -42,21 +35,21 @@ export class UsersService {
     return await this.userRepository.find()
   }
 
-  async findOne(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id: id } })
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ where: { id: id } });
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     const find_user = await this.userRepository.findOne({ where: { id: id } })
     if (find_user) {
-      await this.userRepository.update(find_user.id, updateUserDto)
-      return {
-        statusCode: 201,
-        message: 'Update successfully.'
-      }
-    } return {
-      statusCode: 404,
-      message: 'Can\'t find user.'
+      return await this.userRepository.update(find_user.id, updateUserDto)
+    }
+  }
+
+  async delete(id: number) {
+    const del_user = await this.userRepository.findOne({ where: { id: id } })
+    if (del_user) {
+      return await this.userRepository.remove(del_user);
     }
   }
 }

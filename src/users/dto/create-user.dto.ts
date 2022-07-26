@@ -13,9 +13,4 @@ export class CreateUserDto {
   @IsDefined()
   picture: string
 
-  @IsDefined()
-  balance: Number
-
-  @IsDefined()
-  test_234: Number
 }
