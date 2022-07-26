@@ -26,6 +26,6 @@ const OidcStrategyFactory = {
     UsersModule
   ],
   controllers: [AuthController],
-  providers: [OidcStrategyFactory, SessionSerializer, AuthService, JwtStrategy,UsersModule]
+  providers: [OidcStrategyFactory, SessionSerializer, AuthService, JwtStrategy, UsersModule]
 })
 export class AuthModule {}

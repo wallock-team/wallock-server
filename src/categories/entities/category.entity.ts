@@ -4,10 +4,10 @@ import { Column, Entity, PrimaryGeneratedColumn, Timestamp, Unique } from 'typeo
 @Entity()
 export class Category extends BaseEntity {
   @Column()
-  uID: number
+  userId: number
 
   @Column()
-  parentID: number | null
+  parentId: number | null
 
   @Column()
   isExpense: number
@@ -17,5 +17,4 @@ export class Category extends BaseEntity {
 
   @Column()
   icon: string
-
 }

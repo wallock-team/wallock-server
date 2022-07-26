@@ -47,7 +47,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       user.username = Payload.name
       user.picture = Payload.picture
 
-      return {id_token: tokenset.id_token, userinfo: userinfo}
+      return { id_token: tokenset.id_token,
+userinfo: userinfo }
     } catch (err) {
       throw new UnauthorizedException()
     }

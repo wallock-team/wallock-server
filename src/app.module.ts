@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 // import { GoogleStrategy } from './auth/google.strategy'
-import { User } from './users/entities/user.entity'
 import { UsersModule } from './users/users.module'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
@@ -20,7 +19,7 @@ import { UsersController } from './users/users.controller'
       },
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
-      autoLoadEntities: true,
+      autoLoadEntities: true
     }),
     AuthModule,
     UsersModule

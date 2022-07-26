@@ -1,10 +1,9 @@
-import { BaseEntity } from 'src/base.entity'
-import { Column, Double, Entity, PrimaryColumnCannotBeNullableError, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { BaseEntity } from '../../base.entity'
+import { Column, Entity, Unique } from 'typeorm'
 
 @Entity()
 @Unique(['iss', 'sub'])
-export class User extends BaseEntity{
-
+export class User extends BaseEntity {
   @Column()
   iss: string
 
@@ -17,7 +16,6 @@ export class User extends BaseEntity{
   @Column()
   picture: string
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   balance: Number
-
 }

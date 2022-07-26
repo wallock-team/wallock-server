@@ -1,5 +1,4 @@
-import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
@@ -21,7 +20,6 @@ export class UsersService {
         username: createUserDto.username,
         picture: exist_user.picture
       }
-
     } else {
       const new_user = await this.userRepository.save(createUserDto)
       return {
@@ -36,20 +34,21 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id: id } });
+    return await this.userRepository.findOne({ where: { id: id } })
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const find_user = await this.userRepository.findOne({ where: { id: id } })
+  async update(updateUserDto: UpdateUserDto) {
+    const find_user = await this.userRepository.findOne({ where: { id: updateUserDto.id } })
     if (find_user) {
-      return await this.userRepository.update(find_user.id, updateUserDto)
+      await this.userRepository.update(find_user.id, updateUserDto)
+      return await this.userRepository.findOne({ where: { id: updateUserDto.id } })
     }
   }
 
   async delete(id: number) {
     const del_user = await this.userRepository.findOne({ where: { id: id } })
     if (del_user) {
-      return await this.userRepository.remove(del_user);
+      return await this.userRepository.remove(del_user)
     }
   }
 }
