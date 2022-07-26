@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import JwtAuthGuard from './jwt-auth.guard'
 import GoogleOidcAuthGuard from './google-oidc-auth.guard'
+import FacebookOidcAuthGuard from './facebook-oidc-auth.guard'
 
 @Controller()
 export class AuthController {
@@ -9,7 +10,11 @@ export class AuthController {
 
   @UseGuards(GoogleOidcAuthGuard)
   @Get('/login')
-  login() {}
+  login() { }
+
+  @UseGuards(FacebookOidcAuthGuard)
+  @Get('/oauth2/facebook')
+  loginWithFacebook() {}
 
   @Get('/greet')
   @UseGuards(JwtAuthGuard)
