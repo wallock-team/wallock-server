@@ -1,16 +1,25 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common'
-import { Response } from 'express'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards
+} from '@nestjs/common'
+import { Request, Response } from 'express'
 import JwtAuthGuard from './jwt-auth.guard'
 import GoogleOidcAuthGuard from './google-oidc-auth.guard'
 import FacebookOidcAuthGuard from './facebook-oidc-auth.guard'
 
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor() {}
 
   @UseGuards(GoogleOidcAuthGuard)
-  @Get('/login')
-  login() { }
+  @Get('login-with-google')
+  loginWithGoogle() {}
 
   @UseGuards(FacebookOidcAuthGuard)
   @Get('/oauth2/facebook')
@@ -21,6 +30,9 @@ export class AuthController {
   async greet() {
     return 'Hello Wallock!'
   }
+
+  @Get('/oidc-callback')
+  oidcCallback(@Req() req: Request, @Query('code') code: string) {}
 
   @Post('/callback')
   async loginCallback(

@@ -5,9 +5,9 @@ import { UsersService } from 'src/users/users.service'
 
 @Injectable()
 export default class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  public async validateUser(tokenSet: TokenSet): Promise<User> {
+  public async getOrCreateUserFromTokenSet(tokenSet: TokenSet): Promise<User> {
     const jwtClaims = tokenSet.claims()
 
     const user = await this.usersService.findOne({
