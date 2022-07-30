@@ -6,7 +6,7 @@ import { User } from './users/entities/user.entity'
 import { UsersModule } from './users/users.module'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
-import { AuthController } from './auth/auth.controller'
+import AuthController from './auth/auth.controller'
 import { UsersController } from './users/users.controller'
 import configuration from './config/configuration'
 @Module({

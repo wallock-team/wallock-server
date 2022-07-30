@@ -12,10 +12,11 @@ import { Request, Response } from 'express'
 import JwtAuthGuard from './jwt-auth.guard'
 import GoogleOidcAuthGuard from './google-oidc-auth.guard'
 import FacebookOidcAuthGuard from './facebook-oidc-auth.guard'
+import AuthService from './auth.service'
 
 @Controller('auth')
-export class AuthController {
-  constructor() {}
+export default class AuthController {
+  constructor(private readonly authService: AuthService) {}
 
   @UseGuards(GoogleOidcAuthGuard)
   @Get('login-with-google')
@@ -31,8 +32,15 @@ export class AuthController {
     return 'Hello Wallock!'
   }
 
-  @Get('/oidc-callback')
-  oidcCallback(@Req() req: Request, @Query('code') code: string) {}
+  @Get('/login-with-google-callback')
+  async loginWithGoogleCallback(
+    @Query('code') code: string,
+    @Res() res: Response
+  ) {
+    const tokenSet = await this.authService.exchangeOidcCode('google', code)
+    res.cookie('id_token', tokenSet.id_token)
+    res.redirect('/')
+  }
 
   @Post('/callback')
   async loginCallback(

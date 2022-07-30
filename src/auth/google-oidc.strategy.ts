@@ -1,5 +1,4 @@
 import { forwardRef, Inject } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy, TokenSet } from 'openid-client'
 import { User } from 'src/users/entities/user.entity'
@@ -13,16 +12,16 @@ export default class GoogleOidcStrategy extends PassportStrategy(
   constructor(
     private readonly authService: AuthService,
     @Inject(forwardRef(() => OidcClientsManager))
-    oidcClientsManager: OidcClientsManager,
-    configService: ConfigService
+    oidcClientsManager: OidcClientsManager
   ) {
     super({
       client: oidcClientsManager.getClient('google'),
       params: {
-        redirect_uri: `${configService.get('baseUrl')}/auth/oidc-callback`,
+        redirect_uri: oidcClientsManager.getRedirectUri('google'),
         scope: 'openid',
         response_type: 'code'
-      }
+      },
+      usePKCE: false
     })
   }
 
