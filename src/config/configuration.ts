@@ -4,12 +4,12 @@ export default function configuration() {
     baseUrl: process.env.BASE_URL,
     oidcClients: {
       google: {
-        id: process.env.OIDC_GOOGLE_CLIENT_ID,
-        secret: process.env.OIDC_GOOGLE_CLIENT_ID
+        client_id: process.env.OIDC_GOOGLE_CLIENT_ID,
+        client_secret: process.env.OIDC_GOOGLE_CLIENT_ID
       },
       facebook: {
-        id: process.env.OIDC_FACEBOOK_CLIENT_ID,
-        secret: process.env.OIDC_FACEBOOK_CLIENT_SECRET
+        client_id: process.env.OIDC_FACEBOOK_CLIENT_ID,
+        client_secret: process.env.OIDC_FACEBOOK_CLIENT_SECRET
       }
     }
   }
