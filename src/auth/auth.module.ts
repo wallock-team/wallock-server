@@ -7,6 +7,7 @@ import OidcClientsManager from './oidc-clients-manager'
 import AuthService from './auth.service'
 import GoogleOidcStrategy from './google-oidc.strategy'
 import MocklabOidcStrategy from './mocklab-oidc.strategy'
+import MockOidcStrategy from './mock-oidc.strategy'
 
 @Module({
   imports: [PassportModule, UsersModule, ConfigModule],
@@ -15,6 +16,7 @@ import MocklabOidcStrategy from './mocklab-oidc.strategy'
     AuthService,
     GoogleOidcStrategy,
     MocklabOidcStrategy,
+    MockOidcStrategy,
     OidcClientsManager
   ],
   exports: [AuthService]

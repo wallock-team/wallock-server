@@ -13,6 +13,7 @@ import GoogleOidcAuthGuard from './google-oidc-auth.guard'
 import FacebookOidcAuthGuard from './facebook-oidc-auth.guard'
 import AuthService from './auth.service'
 import MocklabOidcAuthGuard from './mocklab-oidc-auth.guard'
+import MockOidcAuthGuard from './mock-oidc-auth.guard'
 
 @Controller('auth')
 export default class AuthController {
@@ -21,6 +22,10 @@ export default class AuthController {
   @UseGuards(GoogleOidcAuthGuard)
   @Get('login-with-google')
   loginWithGoogle() {}
+
+  @UseGuards(MockOidcAuthGuard)
+  @Get('login-with-mock')
+  loginWithMock() {}
 
   @UseGuards(FacebookOidcAuthGuard)
   @Get('/oauth2/facebook')
@@ -52,6 +57,16 @@ export default class AuthController {
     @Res() res: Response
   ) {
     const tokenSet = await this.authService.exchangeOidcCode('mocklab', code)
+    res.cookie('id_token', tokenSet.id_token)
+    res.redirect('/')
+  }
+
+  @Get('/login-with-mock-callback')
+  async loginWithMockCallback(
+    @Query('code') code: string,
+    @Res() res: Response
+  ) {
+    const tokenSet = await this.authService.exchangeOidcCode('mock', code)
     res.cookie('id_token', tokenSet.id_token)
     res.redirect('/')
   }

@@ -4,6 +4,7 @@ import { error } from 'console'
 import { Client, ClientMetadata, Issuer, IssuerMetadata } from 'openid-client'
 import facebookIssuerMetadata from './facebook-oidc-issuer-metadata'
 import googleIssuerMetadata from './google-oidc-issuer-metadata'
+import mockIssuerMetadata from './mock-oidc-issuer-metadata'
 import mocklabIssuerMetadata from './mocklab-oidc-issuer-metadata'
 
 @Injectable()
@@ -20,6 +21,16 @@ export default class OidcClientsManager {
       facebookIssuerMetadata,
       this.configService.getOrThrow<ClientMetadata>('oidcClients.facebook')
     )
+
+    this.registerClient('mock', mockIssuerMetadata, {
+      client_id: '123',
+      client_secret: '123'
+    })
+
+    this.registerClient('mocklab', mocklabIssuerMetadata, {
+      client_id: '123',
+      client_secret: '123'
+    })
   }
 
   public getRedirectUri(name: string) {
