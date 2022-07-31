@@ -1,81 +1,56 @@
 import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
+import { Category } from './entities/category.entity'
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return {
-        name: 'Home',
-        isExpense: 0,
-        tier: 0,
-        icon: 'home Icon',
-        parentID: null,
-        uID: 1,
-        cateID: 1
+  constructor(
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>
+  ) { }
+
+  async findAllByUserId(userId: number) {
+    return await this.categoryRepository.find({ where: { userId: userId,
+isDeleted: false } })
+  }
+
+  async create(createCategoryDto: CreateCategoryDto) {
+    let { name, userId, icon, group } = { ...createCategoryDto }
+    let isDuplicate = await this.categoryRepository.findOne({ where: { userId: userId,
+    name: name,
+    icon: icon,
+    group: group } })
+    if (!isDuplicate) {
+      await this.categoryRepository.save(createCategoryDto)
+      return createCategoryDto
     }
   }
 
-  findAll(id: number) {
-    return {
-      status_code: 201,
-      data:
-      [
-        {
-          name: 'C Home',
-          isExpense: 'out come',
-          tier: 0,
-          icon: 'Cuong Home Icon',
-          cateID: '123',
-          children: [
-            {
-              name: 'C Home',
-              is_expense: 'out come',
-              tier: 1,
-              icon: 'Some icon'
-            }
-          ]
-        }
-      ]
+
+  async findOne(id: number) {
+    return await this.categoryRepository.findOne({ where: { id: id,
+isDeleted: false } })
+  }
+
+  async update(updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id } })
+    if (category) {
+      await this.categoryRepository.update(category.id, updateCategoryDto)
+      return await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id } })
     }
   }
 
-  findOne(id: number) {
-    return {
-      status_code: 201,
-      data:
-      {
-        name: 'C Home',
-        isExpense: 0,
-        tier: 0,
-        icon: 'Cuong Home Icon',
-        parentID: null,
-        uID: 1,
-        cateID: 1
-      }
+  async delete(id: number) {
+    const category = await this.categoryRepository.findOne({ where: { id: id } })
+    category.isDeleted = true
+    if (category) {
+      await this.categoryRepository.save(category)
+      return true
     }
-  }
-
-  update(updateCategoryDto: UpdateCategoryDto) {
-    return {
-      status_code: 201,
-      data:
-      {
-        name: 'C Home',
-        isExpense: 0,
-        tier: 0,
-        icon: 'Cuong Home Icon',
-        parentID: null,
-        uID: 1,
-        cateID: 1
-      }
-    }
-  }
-
-  remove(id: number) {
-    return {
-      status_code: 201,
-      message: 'delete categories success'
-    }
+    return false
   }
 }
+

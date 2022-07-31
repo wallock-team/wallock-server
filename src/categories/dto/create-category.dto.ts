@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 
 export class CreateCategoryDto {
     @IsNotEmpty()
@@ -8,14 +8,11 @@ export class CreateCategoryDto {
     name: string
 
     @IsNotEmpty()
-    isExpense: number
-
-    @IsNotEmpty()
-    tier: number
+    isExpense: boolean
 
     @IsNotEmpty()
     icon: string
 
     @IsNotEmpty()
-    parentID: number | null
+    group: string
 }

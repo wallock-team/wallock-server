@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
 import { AuthController } from './auth/auth.controller'
 import { UsersController } from './users/users.controller'
+import { CategoriesController } from './categories/categories.controller'
+import { CategoriesModule } from './categories/categories.module'
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -22,9 +24,10 @@ import { UsersController } from './users/users.controller'
       autoLoadEntities: true
     }),
     AuthModule,
-    UsersModule
+    UsersModule,
+    CategoriesModule
   ],
-  controllers: [AppController, AuthController, UsersController],
+  controllers: [AppController, AuthController, UsersController, CategoriesController],
   providers: [AppService, UsersModule],
   exports: [UsersModule]
 })
