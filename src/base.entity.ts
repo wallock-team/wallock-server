@@ -3,11 +3,11 @@ export class BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ default: 0 })
-  is_deleted: number
+  @Column({ default: false })
+  isDeleted: boolean
 
   @Column({ type: 'timestamp',
   nullable: true,
   default: new Date() })
-  create_at: Date
+  createdAt: Date
 }

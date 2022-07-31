@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/base.entity'
-import { Column, Entity, PrimaryGeneratedColumn, Timestamp, Unique } from 'typeorm'
+import { User } from 'src/users/entities/user.entity'
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Timestamp, Unique } from 'typeorm'
 
 @Entity()
 export class Category extends BaseEntity {
@@ -7,14 +8,17 @@ export class Category extends BaseEntity {
   userId: number
 
   @Column()
-  parentId: number | null
+  name: string
 
   @Column()
-  isExpense: number
-
-  @Column()
-  tier: number
+  isExpense: boolean
 
   @Column()
   icon: string
+
+  @Column()
+  group: string
+
+  @ManyToOne(() => User, user => user.categories)
+  user: User
 }
