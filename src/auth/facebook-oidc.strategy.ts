@@ -4,7 +4,10 @@ import { User } from 'src/users/entities/user.entity'
 import AuthService from './auth.service'
 import facebookIssuerMetadata from './facebook-oidc-issuer-metadata'
 
-export class FacebookOidcStrategy extends PassportStrategy(Strategy, 'facebook-oidc') {
+export default class FacebookOidcStrategy extends PassportStrategy(
+  Strategy,
+  'facebook-oidc'
+) {
   private static setupClient(): Client {
     const facebookIssuer = new Issuer(facebookIssuerMetadata)
 
@@ -30,7 +33,7 @@ export class FacebookOidcStrategy extends PassportStrategy(Strategy, 'facebook-o
     tokenSet: TokenSet,
     done: (err: any, user?: User) => void
   ): Promise<void> {
-    const user = await this.authService.validateUser(tokenSet)
+    const user = await this.authService.getOrCreateUserFromTokenSet(tokenSet)
     done(null, user)
   }
 }

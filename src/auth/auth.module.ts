@@ -6,11 +6,17 @@ import { UsersModule } from 'src/users/users.module'
 import OidcClientsManager from './oidc-clients-manager'
 import AuthService from './auth.service'
 import GoogleOidcStrategy from './google-oidc.strategy'
+import MocklabOidcStrategy from './mocklab-oidc.strategy'
 
 @Module({
   imports: [PassportModule, UsersModule, ConfigModule],
   controllers: [AuthController],
-  providers: [AuthService, GoogleOidcStrategy, OidcClientsManager],
+  providers: [
+    AuthService,
+    GoogleOidcStrategy,
+    MocklabOidcStrategy,
+    OidcClientsManager
+  ],
   exports: [AuthService]
 })
 export class AuthModule {}
