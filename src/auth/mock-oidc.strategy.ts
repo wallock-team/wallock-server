@@ -5,9 +5,9 @@ import { User } from 'src/users/entities/user.entity'
 import AuthService from './auth.service'
 import OidcClientsManager from './oidc-clients-manager'
 
-export default class GoogleOidcStrategy extends PassportStrategy(
+export default class MockOidcStrategy extends PassportStrategy(
   Strategy,
-  'google-oidc'
+  'mock-oidc'
 ) {
   constructor(
     private readonly authService: AuthService,
@@ -15,9 +15,9 @@ export default class GoogleOidcStrategy extends PassportStrategy(
     oidcClientsManager: OidcClientsManager
   ) {
     super({
-      client: oidcClientsManager.getClient('google'),
+      client: oidcClientsManager.getClient('mock'),
       params: {
-        redirect_uri: oidcClientsManager.getRedirectUri('google'),
+        redirect_uri: oidcClientsManager.getRedirectUri('mock'),
         scope: 'openid',
         response_type: 'code'
       },

@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-// import { GoogleStrategy } from './auth/google.strategy'
 import { User } from './users/entities/user.entity'
 import { UsersModule } from './users/users.module'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
-import { AuthController } from './auth/auth.controller'
+import AuthController from './auth/auth.controller'
 import { UsersController } from './users/users.controller'
+import configuration from './config/configuration'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,8 +17,10 @@ import { UsersController } from './users/users.controller'
       entities: [User],
       synchronize: true
     }),
+    ConfigModule.forRoot({
+      load: [configuration]
+    }),
     UsersModule,
-    ConfigModule.forRoot(),
     AuthModule
   ],
   controllers: [AppController, AuthController, UsersController],

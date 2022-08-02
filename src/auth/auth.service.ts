@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { TokenSet } from 'openid-client'
 import { User } from 'src/users/entities/user.entity'
-import { UsersService } from 'src/users/users.service'
+import { UsersService } from './../users/users.service'
+import OidcClientsManager from './oidc-clients-manager'
 
 @Injectable()
 export default class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly oidcClientsManager: OidcClientsManager
+  ) {}
 
-  public async validateUser(tokenSet: TokenSet): Promise<User> {
+  public async getOrCreateUserFromTokenSet(tokenSet: TokenSet): Promise<User> {
     const jwtClaims = tokenSet.claims()
 
     const user = await this.usersService.findOne({
@@ -27,5 +31,19 @@ export default class AuthService {
 
       return newlyCreatedUser
     }
+  }
+
+  public async exchangeOidcCode(
+    issuerName: string,
+    code: string
+  ): Promise<TokenSet> {
+    const client = this.oidcClientsManager.getClient(issuerName)
+    return await client.grant({
+      grant_type: 'authorization_code',
+      redirect_uri: this.oidcClientsManager.getRedirectUri(issuerName),
+      client_id: client.metadata.client_id,
+      client_secret: client.metadata.client_secret,
+      code
+    })
   }
 }
