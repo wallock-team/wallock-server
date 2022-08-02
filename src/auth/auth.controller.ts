@@ -68,7 +68,7 @@ export default class AuthController {
   ) {
     const tokenSet = await this.authService.exchangeOidcCode('mock', code)
     res.cookie('id_token', tokenSet.id_token)
-    res.redirect('/')
+    res.redirect('/auth/greet/')
   }
 
   @Post('/callback')

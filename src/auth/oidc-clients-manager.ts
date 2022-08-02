@@ -33,6 +33,14 @@ export default class OidcClientsManager {
     })
   }
 
+  public findClientByUrl(url: string) {
+    for (const [, client] of this.clients) {
+      if (client.issuer.metadata.issuer === url) {
+        return client
+      }
+    }
+  }
+
   public getRedirectUri(name: string) {
     const baseUrl = this.configService.get('baseUrl')
     return `${baseUrl}/auth/login-with-${name}-callback`
