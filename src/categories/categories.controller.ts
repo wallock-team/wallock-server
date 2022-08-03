@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, BadRequestException, InternalServerErrorException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, BadRequestException, InternalServerErrorException, ConflictException } from '@nestjs/common'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
@@ -8,11 +8,10 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  @HttpCode(201)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     let result = await this.categoriesService.create(createCategoryDto)
     if (result) return result
-    throw new BadRequestException('Invalid input')
+    throw new ConflictException('Invalid input')
   }
 
   @Get()

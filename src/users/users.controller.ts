@@ -15,7 +15,11 @@ export class UsersController {
     if (result) return result
     throw new BadRequestException('Not Found User')
   }
-
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.create(createUserDto)
+  }
+  
   @Patch()
   async update(@Body() updateUserDto: UpdateUserDto) {
     //let id = cookie.id.value

@@ -10,9 +10,7 @@ export class CreateCategoryDto {
     @IsNotEmpty()
     isExpense: boolean
 
-    @IsNotEmpty()
-    icon: string
+    icon?: string
 
-    @IsNotEmpty()
-    group: string
+    group?: string
 }

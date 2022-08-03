@@ -13,39 +13,54 @@ export class CategoriesService {
   ) { }
 
   async findAllByUserId(userId: number) {
-    return await this.categoryRepository.find({ where: { userId: userId,
-isDeleted: false } })
+    return await this.categoryRepository.find({
+      where: {
+        userId: userId,
+        isDeleted: false
+      }
+    })
   }
 
   async create(createCategoryDto: CreateCategoryDto) {
-    let { name, userId, icon, group } = { ...createCategoryDto }
-    let isDuplicate = await this.categoryRepository.findOne({ where: { userId: userId,
-    name: name,
-    icon: icon,
-    group: group } })
+    const { name, userId, icon, group, isExpense } = { ...createCategoryDto }
+    const isDuplicate = await this.categoryRepository
+      .findOne({
+        where: {
+          userId: userId,
+          name: name,
+          icon: icon,
+          group: group
+        }
+      })
     if (!isDuplicate) {
       await this.categoryRepository.save(createCategoryDto)
-      return { name, userId, icon, group }
+      return { name, icon, group, isExpense }
     }
   }
 
 
   async findOne(id: number) {
-    let category = await this.categoryRepository.findOne({ where: { id: id,
-      isDeleted: false } })
-    if(category){
+    // userID only can find it cate
+    let category = await this.categoryRepository.findOne({
+      where: {
+        id: id,
+        isDeleted: false
+      }
+    })
+    if (category) {
       let { userId, name, isExpense, icon, group } = category
       return { userId, name, isExpense, icon, group }
     }
+    // To Do access denied
+    // To Do can not find
   }
 
   async update(updateCategoryDto: UpdateCategoryDto) {
     const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id, isDeleted: false } })
     if (category) {
       await this.categoryRepository.update(category.id, updateCategoryDto);
-      let {userId, name, isExpense, icon, group} = 
-      await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id } })
-      return {userId, name, isExpense, icon, group}
+      let {  name, icon, group } = {...updateCategoryDto}
+      return {  name, icon, group }
     }
   }
 
@@ -54,9 +69,7 @@ isDeleted: false } })
     if (category) {
       category.isDeleted = true
       await this.categoryRepository.save(category)
-      return true
     }
-    return false
   }
 }
 

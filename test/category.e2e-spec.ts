@@ -45,18 +45,18 @@ describe('Test usersModule', () => {
       .expect(
         {
           "name": "Food1",
-          "userId": 1,
           "icon": "smile",
-          "group": "Basic"
+          "group": "Basic",
+          "isExpense": true
         }
       )
   })
 
-  it('Create same category will return 400', () => {
+  it('Create same category will return 409', () => {
     return request(app.getHttpServer())
       .post('/categories')
       .send(createDTO)
-      .expect(400)
+      .expect(409)
   })
 
   it('Get all categories by Userid', () => {
@@ -92,9 +92,7 @@ describe('Test usersModule', () => {
       .send(updateDTO)
       .expect(200)
       .expect({
-        "userId": 1,
         "name": "Food1 updated",
-        "isExpense": true,
         "icon": "Food",
         "group": "Basic"
       })
@@ -104,14 +102,12 @@ describe('Test usersModule', () => {
     return request(app.getHttpServer())
       .del('/categories/1')
       .expect(200)
-      .expect('true')
   })
 
   it('Delete deleted categories by id', () => {
     return request(app.getHttpServer())
       .del('/categories/1')
       .expect(200)
-      .expect('false')
   })
 
   it('Get deleted categories will return 400', () => {
