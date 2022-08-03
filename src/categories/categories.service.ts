@@ -25,28 +25,34 @@ isDeleted: false } })
     group: group } })
     if (!isDuplicate) {
       await this.categoryRepository.save(createCategoryDto)
-      return createCategoryDto
+      return { name, userId, icon, group }
     }
   }
 
 
   async findOne(id: number) {
-    return await this.categoryRepository.findOne({ where: { id: id,
-isDeleted: false } })
+    let category = await this.categoryRepository.findOne({ where: { id: id,
+      isDeleted: false } })
+    if(category){
+      let { userId, name, isExpense, icon, group } = category
+      return { userId, name, isExpense, icon, group }
+    }
   }
 
   async update(updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id } })
+    const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id, isDeleted: false } })
     if (category) {
-      await this.categoryRepository.update(category.id, updateCategoryDto)
-      return await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id } })
+      await this.categoryRepository.update(category.id, updateCategoryDto);
+      let {userId, name, isExpense, icon, group} = 
+      await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id } })
+      return {userId, name, isExpense, icon, group}
     }
   }
 
   async delete(id: number) {
-    const category = await this.categoryRepository.findOne({ where: { id: id } })
-    category.isDeleted = true
+    const category = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false } })
     if (category) {
+      category.isDeleted = true
       await this.categoryRepository.save(category)
       return true
     }
