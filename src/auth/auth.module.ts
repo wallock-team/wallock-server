@@ -1,31 +1,26 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
-import { OidcStrategy, buildOpenIdClient } from './oidc.strategy'
-import { SessionSerializer } from './session.serializer'
-import { AuthService } from './auth.service'
-import { AuthController } from './auth.controller'
-import { UsersModule } from '../users/users.module'
-import { JwtStrategy } from './jwt.statergy'
-
-const OidcStrategyFactory = {
-  provide: 'OidcStrategy',
-  useFactory: async (authService: AuthService) => {
-    const client = await buildOpenIdClient() // secret sauce! build the dynamic client before injecting it into the strategy for use in the constructor super call.
-    const strategy = new OidcStrategy(authService, client)
-    return strategy
-  },
-  inject: [AuthService]
-}
+import AuthController from './auth.controller'
+import { UsersModule } from './../users/users.module'
+import OidcClientsManager from './oidc-clients-manager'
+import AuthService from './auth.service'
+import GoogleOidcStrategy from './google-oidc.strategy'
+import MocklabOidcStrategy from './mocklab-oidc.strategy'
+import MockOidcStrategy from './mock-oidc.strategy'
+import { JwtStrategy } from './jwt.strategy'
 
 @Module({
-  imports: [
-    PassportModule.register({
-      session: true,
-      defaultStrategy: 'oidc'
-    }),
-    UsersModule
-  ],
+  imports: [PassportModule, UsersModule, ConfigModule],
   controllers: [AuthController],
-  providers: [OidcStrategyFactory, SessionSerializer, AuthService, JwtStrategy, UsersModule]
+  providers: [
+    AuthService,
+    GoogleOidcStrategy,
+    MocklabOidcStrategy,
+    MockOidcStrategy,
+    OidcClientsManager,
+    JwtStrategy
+  ],
+  exports: [AuthService]
 })
 export class AuthModule {}

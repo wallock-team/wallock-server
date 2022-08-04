@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -7,9 +7,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   sub: string
 
-  @IsDefined()
-  username: string
+  @IsNotEmpty()
+  name: string
 
-  @IsDefined()
-  picture: string
+  picture?: string
 }

@@ -12,7 +12,7 @@ export class User extends BaseEntity {
   sub: string
 
   @Column()
-  username: string
+  name: string
 
   @Column()
   picture: string
