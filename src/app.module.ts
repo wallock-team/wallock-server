@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module'
 import AuthController from './auth/auth.controller'
 import { UsersController } from './users/users.controller'
 import configuration from './config/configuration'
+import { CategoriesModule } from './categories/categories.module'
+import { CategoriesController } from './categories/categories.controller'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -21,9 +23,11 @@ import configuration from './config/configuration'
       load: [configuration]
     }),
     UsersModule,
-    AuthModule
+    AuthModule, 
+    CategoriesModule,
   ],
-  controllers: [AppController, AuthController, UsersController],
-  providers: [AppService]
+  controllers: [AppController, AuthController, UsersController, CategoriesController],
+  providers: [AppService, UsersModule],
+  exports: [UsersModule]
 })
 export class AppModule {}

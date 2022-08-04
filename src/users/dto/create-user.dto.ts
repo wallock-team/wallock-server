@@ -7,5 +7,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   sub: string
 
+  @IsNotEmpty()
+  name: string
+
   picture?: string
 }

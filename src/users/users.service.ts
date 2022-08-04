@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOne({
@@ -22,6 +22,7 @@ export class UsersService {
     })
 
     if (user) {
+      //TO DO throw other exception
       throw new ConflictException(
         `User with iss '${createUserDto.iss}' and sub '${createUserDto.sub}' is already created`
       )
@@ -34,26 +35,22 @@ export class UsersService {
     return await this.userRepository.find()
   }
 
-  async find(options?: FindManyOptions<User>): Promise<User[]> {
-    return this.userRepository.find(options)
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ where: { id: id } })
   }
 
-  async findOne(options?: FindOneOptions<User>): Promise<User> {
-    return this.userRepository.findOne(options)
-  }
-
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
-    const find_user = await this.userRepository.findOne({ where: { id: id } })
+  async update(updateUserDto: UpdateUserDto) {
+    const find_user = await this.userRepository.findOne({ where: { id: updateUserDto.id } })
     if (find_user) {
       await this.userRepository.update(find_user.id, updateUserDto)
-      return {
-        statusCode: 201,
-        message: 'Update successfully.'
-      }
+      return await this.userRepository.findOne({ where: { id: updateUserDto.id } })
     }
-    return {
-      statusCode: 404,
-      message: 'Can\'t find user.'
+  }
+
+  async delete(id: number) {
+    const del_user = await this.userRepository.findOne({ where: { id: id } })
+    if (del_user) {
+      return await this.userRepository.remove(del_user)
     }
   }
 }

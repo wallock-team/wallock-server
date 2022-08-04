@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common'
+import { Controller, Post, Body, Get, Param, Patch, HttpCode, Delete, BadRequestException } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -7,27 +7,21 @@ import { UpdateUserDto } from './dto/update-user.dto'
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto)
+  @Get('/me')
+  async findOne() {
+    //let id = cookie.id.value
+    let id = 2
+    let result = await this.usersService.findOne(id)
+    if (result) return result
+    throw new BadRequestException('Not Found User')
   }
-
-  @Get()
-  async findALl() {
-    return await this.usersService.findAll()
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usersService.findOne({
-      where: {
-        id: id
-      }
-    })
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(id, updateUserDto)
+  
+  @Patch()
+  async update(@Body() updateUserDto: UpdateUserDto) {
+    //let id = cookie.id.value
+    //updateUserDto.id = id
+    let result = await this.usersService.update(updateUserDto)
+    if (result) return result
+    throw new BadRequestException('Not Found User')
   }
 }
