@@ -6,8 +6,10 @@ export class BaseEntity {
   @Column({ default: false })
   isDeleted: boolean
 
-  @Column({ type: 'timestamp',
-  nullable: true,
-  default: new Date() })
-  createdAt: Date
+  //timestamp not support in sqlite3
+  // { type: 'timestamp',
+  // nullable: true,
+  // default: new Date() }
+  @Column({ type: 'date', nullable: true, default: Date()})
+  createdAt: String
 }

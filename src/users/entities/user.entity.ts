@@ -1,6 +1,7 @@
 import { BaseEntity } from '../../base.entity'
-import { Column, Entity, OneToMany, Unique } from 'typeorm'
+import { Column, Entity, OneToMany, OneToOne, Unique } from 'typeorm'
 import { Category } from 'src/categories/entities/category.entity'
+import { Transaction } from 'src/transactions/entities/transaction.entity'
 
 @Entity()
 @Unique(['iss', 'sub'])
@@ -18,8 +19,11 @@ export class User extends BaseEntity {
   picture: string
 
   @Column({ default: 0 })
-  balance: Number
+  balance: number
 
   @OneToMany(() => Category, category => category.user)
   categories: Category[]
+
+  @OneToOne(() => Transaction, transaction => transaction.user)
+  transaction: Transaction
 }

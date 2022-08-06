@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Param, Patch, HttpCode, Delete, BadRequest
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
+import { get } from 'http'
 
 @Controller('users')
 export class UsersController {
@@ -23,5 +24,15 @@ export class UsersController {
     let result = await this.usersService.update(updateUserDto)
     if (result) return result
     throw new BadRequestException('Not Found User')
+  }
+
+  @Get()
+  async findAll(){
+    return await this.usersService.findAll()
+  }
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.create(createUserDto)
   }
 }

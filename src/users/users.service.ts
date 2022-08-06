@@ -39,6 +39,10 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { id: id } })
   }
 
+  async findByIssSub(iss: string, sub: string){
+    return await this.userRepository.findOne({where: {iss: iss, sub: sub}})
+  }
+
   async update(updateUserDto: UpdateUserDto) {
     const find_user = await this.userRepository.findOne({ where: { id: updateUserDto.id } })
     if (find_user) {
