@@ -8,11 +8,12 @@ export class BaseEntity {
 
   @Column({
     type: 'int',
-    nullable: true,
+    nullable: false,
     transformer: {
-      from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
-      to: (date: Date): number => date.getTime()
-    }
+      from: (millisFromEpoch: number) => new Date(millisFromEpoch),
+      to: (date?: Date) => date?.getTime()
+    },
+    default: Date.now()
   })
   createdAt: Date
 }
