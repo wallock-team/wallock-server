@@ -14,9 +14,6 @@ export class User extends BaseEntity {
   @Column()
   name: string
 
-  @Column()
-  picture: string
-
   @Column({ default: 0 })
   balance: Number
 
