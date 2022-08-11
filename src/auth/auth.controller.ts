@@ -47,6 +47,7 @@ export default class AuthController {
     @Res() res: Response
   ) {
     const tokenSet = await this.authService.exchangeOidcCode('google', code)
+    await this.authService.getOrCreateUserFromTokenSet(tokenSet)
     res.cookie('id_token', tokenSet.id_token)
     res.redirect('/')
   }

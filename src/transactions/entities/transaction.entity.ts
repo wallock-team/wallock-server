@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../base.entity'
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm'
+import { Column, Entity, OneToOne } from 'typeorm'
 import { Category } from 'src/categories/entities/category.entity'
 import { User } from 'src/users/entities/user.entity'
 
@@ -17,8 +17,17 @@ export class Transaction extends BaseEntity {
   @Column({default: null})
   note: String
 
-  @Column({ type: 'date', nullable: true, default: Date()})
-  date: String
+  @Column({
+    type: 'int',
+    nullable: true,
+    transformer: {
+      from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
+      to: (date?: Date): number => date?.getTime()
+    },
+    default: Date.now()
+  })
+  // @Column({ type: 'date', nullable: true, default: Date()})
+  date: Date
 
   @OneToOne(() => Category, category => category.transaction)
   categories: Category

@@ -27,7 +27,7 @@ export class UsersService {
         `User with iss '${createUserDto.iss}' and sub '${createUserDto.sub}' is already created`
       )
     } else {
-      return this.userRepository.save(createUserDto)
+      return await this.userRepository.save(createUserDto)
     }
   }
 

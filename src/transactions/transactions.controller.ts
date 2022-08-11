@@ -2,20 +2,36 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestExc
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { Between } from "typeorm";
 
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(private readonly transactionsService: TransactionsService) { }
+
+  @Get('/current')
+  async getCurrentTrans() {
+    // userId = req.cookie.userid
+    let userId = 1
+    var date = new Date();
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    console.log(firstDay, lastDay)
+    const test = await this.transactionsService.find({
+        userId: userId,
+        // date: Between(firstDay,lastDay),
+    })
+    return test
+  }
 
   @Post()
   createTransaction(@Body() createTransactionDto: CreateTransactionDto) {
     const trans = this.transactionsService.create(createTransactionDto);
-    if(trans) return trans
+    if (trans) return trans
     throw new BadRequestException()
   }
 
   @Get()
-  getAllTransaction(@Query('userId') userId : number) {
+  getAllTransaction(@Query('userId') userId: number) {
     return this.transactionsService.findAllByUserId(userId);
   }
 
@@ -24,13 +40,13 @@ export class TransactionsController {
     return this.transactionsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+  @Patch()
+  updateTransaction(@Body() updateTransactionDto: UpdateTransactionDto) {
+    return this.transactionsService.update(updateTransactionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  delTransaction(@Param('id') id: number) {
     return this.transactionsService.remove(+id);
   }
 }

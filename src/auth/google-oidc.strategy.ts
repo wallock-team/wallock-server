@@ -18,7 +18,7 @@ export default class GoogleOidcStrategy extends PassportStrategy(
       client: oidcClientsManager.getClient('google'),
       params: {
         redirect_uri: oidcClientsManager.getRedirectUri('google'),
-        scope: 'openid',
+        scope: 'openid profile',
         response_type: 'code'
       },
       usePKCE: false
