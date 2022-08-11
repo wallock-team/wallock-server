@@ -1,6 +1,6 @@
 import { IssuerMetadata } from 'openid-client'
 
-const mockIssuerMetadata: IssuerMetadata = {
+const mockOidcIssuerMetadata: IssuerMetadata = {
   issuer: 'http://localhost:8080',
   authorization_endpoint: 'http://localhost:8080/authorize',
   token_endpoint: 'http://localhost:8080/token',
@@ -8,4 +8,4 @@ const mockIssuerMetadata: IssuerMetadata = {
   jwks_uri: 'http://localhost:8080/jwks'
 }
 
-export default mockIssuerMetadata
+export default mockOidcIssuerMetadata

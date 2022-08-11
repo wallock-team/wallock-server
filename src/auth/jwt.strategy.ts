@@ -4,11 +4,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { Request } from 'express'
 import { passportJwtSecret } from 'jwks-rsa'
 import { decode } from 'jsonwebtoken'
-import OidcClientsManager from './oidc-clients-manager'
+import googleOidcIssuerMetadata from './google-oidc-issuer-metadata'
+import mockOidcIssuerMetadata from './mock-oidc-issuer-metadata'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(oidcClientsManager: OidcClientsManager) {
+  constructor() {
     super({
       secretOrKeyProvider: function (
         request: Request,
@@ -17,10 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       ): void {
         const decodedJwt = decode(rawJwtToken, { json: true })
 
-        const client = oidcClientsManager.findClientByUrl(decodedJwt.iss)
+        const jwksUri = getJwksUriFromIssuer(decodedJwt.iss)
 
         passportJwtSecret({
-          jwksUri: client.issuer.metadata.jwks_uri
+          jwksUri: jwksUri
         })(request, rawJwtToken, done)
       },
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -37,5 +38,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     return token
+  }
+}
+
+function getJwksUriFromIssuer(issuer: string) {
+  if (issuer === googleOidcIssuerMetadata.issuer) {
+    return googleOidcIssuerMetadata.jwks_uri
+  } else if (issuer === mockOidcIssuerMetadata.issuer) {
+    return mockOidcIssuerMetadata.jwks_uri
+  } else {
+    throw new Error(`Unsupported issuer: ${issuer}`)
   }
 }

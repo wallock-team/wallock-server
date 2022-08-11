@@ -11,8 +11,10 @@ export class User extends BaseEntity {
   @Column()
   sub: string
 
-  @Column()
-  name: string
+  @Column({
+    nullable: true
+  })
+  name?: string
 
   @Column({ default: 0 })
   balance: Number
