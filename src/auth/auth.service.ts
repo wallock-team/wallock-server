@@ -26,7 +26,8 @@ export default class AuthService {
     } else {
       const newlyCreatedUser = await this.usersService.create({
         iss: jwtClaims.iss,
-        sub: jwtClaims.sub
+        sub: jwtClaims.sub,
+        name: jwtClaims.name
       })
 
       return newlyCreatedUser
