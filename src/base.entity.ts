@@ -6,8 +6,13 @@ export class BaseEntity {
   @Column({ default: false })
   isDeleted: boolean
 
-  @Column({ type: 'timestamp',
-  nullable: true,
-  default: new Date() })
+  @Column({
+    type: 'int',
+    nullable: true,
+    transformer: {
+      from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
+      to: (date: Date): number => date.getTime()
+    }
+  })
   createdAt: Date
 }
