@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm'
+import { FindOneOptions, Repository } from 'typeorm'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOne({
@@ -35,15 +35,19 @@ export class UsersService {
     return await this.userRepository.find()
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id: id } })
+  async findOne(opts?: FindOneOptions) {
+    return await this.userRepository.findOne(opts)
   }
 
   async update(updateUserDto: UpdateUserDto) {
-    const find_user = await this.userRepository.findOne({ where: { id: updateUserDto.id } })
+    const find_user = await this.userRepository.findOne({
+      where: { id: updateUserDto.id }
+    })
     if (find_user) {
       await this.userRepository.update(find_user.id, updateUserDto)
-      return await this.userRepository.findOne({ where: { id: updateUserDto.id } })
+      return await this.userRepository.findOne({
+        where: { id: updateUserDto.id }
+      })
     }
   }
 
