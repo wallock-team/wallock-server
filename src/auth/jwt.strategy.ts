@@ -6,10 +6,11 @@ import { passportJwtSecret } from 'jwks-rsa'
 import { decode } from 'jsonwebtoken'
 import googleOidcIssuerMetadata from './google-oidc-issuer-metadata'
 import mockOidcIssuerMetadata from './mock-oidc-issuer-metadata'
+import { UsersService } from 'src/users/users.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor() {
+  constructor(private readonly usersService: UsersService) {
     super({
       secretOrKeyProvider: function (
         request: Request,
@@ -35,9 +36,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   async validate(token: any) {
     if (!token) {
       throw new UnauthorizedException()
+    } else {
+      return await this.usersService.findOne({
+        where: {
+          iss: token.iss,
+          sub: token.sub
+        }
+      })
     }
-
-    return token
   }
 }
 

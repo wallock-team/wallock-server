@@ -1,12 +1,35 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Req,
+  Res,
+  UseGuards
+} from '@nestjs/common'
 import JwtAuthGuard from './jwt-auth.guard'
 import GoogleOidcAuthGuard from './google-oidc-auth.guard'
-import AuthService from './auth.service'
 import MockOidcAuthGuard from './mock-oidc-auth.guard'
+import { Response, Request } from 'express'
+import { ConfigService } from '@nestjs/config'
 
 @Controller('auth')
 export default class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly configService: ConfigService) {}
+
+  @Get('login/social-login/:issuer')
+  socialLogin(
+    @Param('issuer') issuer: string,
+    @Query('authorized_uri') authorizedUri: string,
+    @Res() res: Response
+  ) {
+    const loginUrl = `${this.configService.getOrThrow<string>(
+      'BASE_URL'
+    )}/auth/login-with-${issuer}`
+
+    res.cookie('authorized_uri', authorizedUri)
+    res.redirect(loginUrl)
+  }
 
   @UseGuards(GoogleOidcAuthGuard)
   @Get('login-with-google')
@@ -18,7 +41,7 @@ export default class AuthController {
 
   @Get('/greet')
   @UseGuards(JwtAuthGuard)
-  async greet() {
-    return 'Hello Wallock!'
+  async greet(@Req() req: Request) {
+    return req.user
   }
 }

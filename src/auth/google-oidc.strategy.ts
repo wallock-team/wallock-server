@@ -42,7 +42,7 @@ export default class GoogleOidcStrategy extends PassportStrategy(
   async validate(req: Request, tokenSet: TokenSet): Promise<User> {
     req.res
       .cookie('id_token', tokenSet.id_token, { httpOnly: true })
-      .status(200)
+      .redirect(req.cookies['authorized_uri'])
 
     return await this.authService.getOrCreateUserFromTokenSet(tokenSet)
   }
