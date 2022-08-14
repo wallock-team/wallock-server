@@ -3,6 +3,14 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Between } from "typeorm";
+import format from 'date-fns/format';
+
+// TypeORM Query Operators
+export const BetweenDates = (from: Date, to: Date) =>
+  Between(
+    from.getTime(),
+    to.getTime(),
+);
 
 @Controller('transactions')
 export class TransactionsController {
@@ -15,10 +23,12 @@ export class TransactionsController {
     var date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    console.log(firstDay, lastDay)
+    console.log(firstDay+" : "+ lastDay)
     const test = await this.transactionsService.find({
+      where: {
         userId: userId,
-        // date: Between(firstDay,lastDay),
+        date: Between(firstDay,lastDay),
+      }
     })
     return test
   }

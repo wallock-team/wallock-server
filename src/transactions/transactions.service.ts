@@ -16,8 +16,8 @@ export class TransactionsService {
     private cateService: CategoriesService,
   ) { }
 
-  async find(options: FindOptionsWhere<Transaction> | FindOptionsWhere<Transaction>[]){
-    return await this.transactionRepository.findBy(options)
+  async find(options?: FindManyOptions<Transaction>){
+    return await this.transactionRepository.find(options)
   }
 
   async create(createTransactionDto: CreateTransactionDto) {

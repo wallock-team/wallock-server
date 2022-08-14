@@ -12,6 +12,6 @@ export class CreateTransactionDto {
 
     note?: String
 
-    date?: String
+    date?: Date
 }
 

@@ -1,7 +1,8 @@
 import { BaseEntity } from '../../base.entity'
-import { Column, Entity, OneToOne } from 'typeorm'
+import { Column, Entity, FindOperator, OneToOne } from 'typeorm'
 import { Category } from 'src/categories/entities/category.entity'
 import { User } from 'src/users/entities/user.entity'
+import e from 'express'
 
 @Entity()
 export class Transaction extends BaseEntity {
@@ -22,7 +23,16 @@ export class Transaction extends BaseEntity {
     nullable: true,
     transformer: {
       from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
-      to: (date?: Date): number => date?.getTime()
+      to(date?: Date) {
+        if (!date) {
+          return null
+        } else if (date instanceof Date) {
+          return date.getTime()
+        } else if (date instanceof FindOperator<number>) {
+
+        }
+        date?.getTime()
+      }
     },
     default: Date.now()
   })
