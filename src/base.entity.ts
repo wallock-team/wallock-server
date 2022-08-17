@@ -6,10 +6,14 @@ export class BaseEntity {
   @Column({ default: false })
   isDeleted: boolean
 
-  //timestamp not support in sqlite3
-  // { type: 'timestamp',
-  // nullable: true,
-  // default: new Date() }
-  @Column({ type: 'date', nullable: true, default: Date()})
-  createdAt: String
+  @Column({
+    type: 'int',
+    nullable: false,
+    transformer: {
+      from: (millisFromEpoch: number) => new Date(millisFromEpoch),
+      to: (date?: Date) => date?.getTime()
+    },
+    default: Date.now()
+  })
+  createdAt: Date
 }

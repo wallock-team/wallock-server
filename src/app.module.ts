@@ -30,7 +30,12 @@ import { Transaction } from './transactions/entities/transaction.entity'
     CategoriesModule, 
     TransactionsModule,
   ],
-  controllers: [AppController, AuthController, UsersController, CategoriesController],
+  controllers: [
+    AppController,
+    AuthController,
+    UsersController,
+    CategoriesController
+  ],
   providers: [AppService, UsersModule],
   exports: [UsersModule]
 })

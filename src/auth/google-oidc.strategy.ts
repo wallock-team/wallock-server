@@ -1,9 +1,11 @@
 import { forwardRef, Inject } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy, TokenSet } from 'openid-client'
+import { Issuer, Strategy, TokenSet } from 'openid-client'
 import { User } from 'src/users/entities/user.entity'
 import AuthService from './auth.service'
-import OidcClientsManager from './oidc-clients-manager'
+import { Request } from 'express'
+import googleOidcIssuerMetadata from './google-oidc-issuer-metadata'
 
 export default class GoogleOidcStrategy extends PassportStrategy(
   Strategy,
@@ -11,25 +13,37 @@ export default class GoogleOidcStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly authService: AuthService,
-    @Inject(forwardRef(() => OidcClientsManager))
-    oidcClientsManager: OidcClientsManager
+    @Inject(forwardRef(() => ConfigService))
+    configService: ConfigService
   ) {
+    const clientId = configService.getOrThrow<string>('OIDC_GOOGLE_CLIENT_ID')
+    const clientSecret = configService.getOrThrow<string>(
+      'OIDC_GOOGLE_CLIENT_SECRET'
+    )
+    const client = new new Issuer(googleOidcIssuerMetadata).Client({
+      client_id: clientId,
+      client_secret: clientSecret
+    })
+    const redirectUri =
+      configService.getOrThrow<string>('BASE_URL') + '/auth/login-with-google'
+
     super({
-      client: oidcClientsManager.getClient('google'),
+      client,
       params: {
-        redirect_uri: oidcClientsManager.getRedirectUri('google'),
+        redirect_uri: redirectUri,
         scope: 'openid profile',
         response_type: 'code'
       },
+      passReqToCallback: true,
       usePKCE: false
     })
   }
 
-  async validate(
-    tokenSet: TokenSet,
-    done: (err: any, user?: User) => void
-  ): Promise<void> {
-    const user = await this.authService.getOrCreateUserFromTokenSet(tokenSet)
-    done(null, user)
+  async validate(req: Request, tokenSet: TokenSet): Promise<User> {
+    req.res
+      .cookie('id_token', tokenSet.id_token, { httpOnly: true })
+      .redirect(req.cookies['authorized_uri'])
+
+    return await this.authService.getOrCreateUserFromTokenSet(tokenSet)
   }
 }

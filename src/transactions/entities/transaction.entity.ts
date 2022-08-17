@@ -18,25 +18,25 @@ export class Transaction extends BaseEntity {
   @Column({default: null})
   note: String
 
-  @Column({
-    type: 'int',
-    nullable: true,
-    transformer: {
-      from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
-      to(date?: Date) {
-        if (!date) {
-          return null
-        } else if (date instanceof Date) {
-          return date.getTime()
-        } else if (date instanceof FindOperator<number>) {
+  // @Column({
+  //   type: 'int',
+  //   nullable: true,
+  //   transformer: {
+  //     from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
+  //     to(date?: Date) {
+  //       if (!date) {
+  //         return null
+  //       } else if (date instanceof Date) {
+  //         return date.getTime()
+  //       } else if (date instanceof FindOperator<number>) {
 
-        }
-        date?.getTime()
-      }
-    },
-    default: Date.now()
-  })
-  // @Column({ type: 'date', nullable: true, default: Date()})
+  //       }
+  //       date?.getTime()
+  //     }
+  //   },
+  //   default: Date.now()
+  // })
+  @Column({ type: 'date', nullable: true, default: Date()})
   date: Date
 
   @OneToOne(() => Category, category => category.transaction)

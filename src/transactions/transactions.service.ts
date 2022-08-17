@@ -22,7 +22,7 @@ export class TransactionsService {
 
   async create(createTransactionDto: CreateTransactionDto) {
     try {
-      const findUser = await this.userService.findOne(createTransactionDto.userId)
+      const findUser = await this.userService.findOne({where : { id: createTransactionDto.userId, isDeleted: false}})
       const findCate = await this.cateService.findOne(createTransactionDto.cateId)
 
       if (!findUser) {
@@ -51,7 +51,7 @@ export class TransactionsService {
 
   async findAllByUserId(userId: number) {
     try {
-      const findUser = await this.userService.findOne(userId)
+      const findUser = await this.userService.findOne({where : { id: userId, isDeleted: false}})
       if (!findUser) {
         throw new Error("Can't find User")
       }
@@ -83,7 +83,7 @@ export class TransactionsService {
             isDeleted: false
           }
         })
-      const findUser = await this.userService.findOne(findTrans.userId)
+      const findUser = await this.userService.findOne({where : { id: findTrans.userId, isDeleted: false}})
 
       if (!findCate) {
         throw new Error("Can't find category")
@@ -111,7 +111,7 @@ export class TransactionsService {
   async remove(id: number) {
     try {
       const delTrans = await this.transactionRepository.findOne({ where: { id: id, isDeleted: false } })
-      const findUser = await this.userService.findOne(delTrans.userId)
+      const findUser = await this.userService.findOne({where : { id: delTrans.userId, isDeleted: false}})
       const findCate = await this.cateService.findOne(delTrans.cateId)
       if (delTrans) {
         if(findCate.isExpense == true){
