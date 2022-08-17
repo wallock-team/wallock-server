@@ -34,7 +34,10 @@ export class CategoriesService {
       })
     if (!isDuplicate) {
       await this.categoryRepository.save(createCategoryDto)
-      return { name, icon, group, isExpense }
+      return { name,
+icon,
+group,
+isExpense }
     }
   }
 
@@ -49,23 +52,31 @@ export class CategoriesService {
     })
     if (category) {
       let { userId, name, isExpense, icon, group } = category
-      return { userId, name, isExpense, icon, group }
+      return { userId,
+name,
+isExpense,
+icon,
+group }
     }
     // To Do access denied
     // To Do can not find
   }
 
   async update(updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id, isDeleted: false } })
+    const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id,
+isDeleted: false } })
     if (category) {
-      await this.categoryRepository.update(category.id, updateCategoryDto);
-      let {  name, icon, group } = {...updateCategoryDto}
-      return {  name, icon, group }
+      await this.categoryRepository.update(category.id, updateCategoryDto)
+      let { name, icon, group } = { ...updateCategoryDto }
+      return { name,
+icon,
+group }
     }
   }
 
   async delete(id: number) {
-    const category = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false } })
+    const category = await this.categoryRepository.findOne({ where: { id: id,
+isDeleted: false } })
     if (category) {
       category.isDeleted = true
       await this.categoryRepository.save(category)

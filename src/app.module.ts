@@ -12,23 +12,23 @@ import { UsersController } from './users/users.controller'
 import configuration from './config/configuration'
 import { CategoriesModule } from './categories/categories.module'
 import { CategoriesController } from './categories/categories.controller'
-import { TransactionsModule } from './transactions/transactions.module';
+import { TransactionsModule } from './transactions/transactions.module'
 import { Transaction } from './transactions/entities/transaction.entity'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: ':memory:',
-      entities: [User,Category,Transaction],
+      entities: [User, Category, Transaction],
       synchronize: true
     }),
     ConfigModule.forRoot({
       load: [configuration]
     }),
     UsersModule,
-    AuthModule, 
-    CategoriesModule, 
-    TransactionsModule,
+    AuthModule,
+    CategoriesModule,
+    TransactionsModule
   ],
   controllers: [AppController, AuthController, UsersController, CategoriesController],
   providers: [AppService, UsersModule],

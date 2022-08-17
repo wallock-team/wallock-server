@@ -15,7 +15,7 @@ export class User extends BaseEntity {
   @Column()
   name: string
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   picture?: string
 
   @Column({ default: 0 })

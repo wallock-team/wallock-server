@@ -10,6 +10,8 @@ export class BaseEntity {
   // { type: 'timestamp',
   // nullable: true,
   // default: new Date() }
-  @Column({ type: 'date', nullable: true, default: Date()})
+  @Column({ type: 'date',
+nullable: true,
+default: Date() })
   createdAt: String
 }
