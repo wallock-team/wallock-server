@@ -12,5 +12,4 @@ export class UpdateTransactionDto {
     note?: String
 
     date?: Date
-
 }

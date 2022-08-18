@@ -10,7 +10,7 @@ export default class AuthService {
   public async getOrCreateUserFromTokenSet(tokenSet: TokenSet): Promise<User> {
     const jwtClaims = tokenSet.claims()
 
-    const user = await this.usersService.findByIssSub( jwtClaims.iss, jwtClaims.sub )
+    const user = await this.usersService.findByIssSub(jwtClaims.iss, jwtClaims.sub)
 
     if (user) {
       return user

@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/base.entity'
 import { User } from 'src/users/entities/user.entity'
 import { Transaction } from 'src/transactions/entities/transaction.entity'
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, Timestamp, Unique } from 'typeorm'
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm'
 
 @Entity()
 export class Category extends BaseEntity {
