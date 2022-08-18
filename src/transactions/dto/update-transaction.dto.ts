@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator'
 
 export class UpdateTransactionDto {
     @IsNotEmpty()
-    transId: number
+    id: number
 
     @IsNotEmpty()
     cateId: number

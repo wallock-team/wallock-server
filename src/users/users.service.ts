@@ -35,7 +35,11 @@ export class UsersService {
   }
 
   async findOne(opts?: FindOneOptions) {
-    return await this.userRepository.findOne(opts)
+    let user = await this.userRepository.findOne(opts)
+    if (user){
+      return user
+    }
+    throw new Error('Not found User')
   }
 
   async findByIssSub(iss: string, sub: string) {

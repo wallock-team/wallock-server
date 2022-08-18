@@ -34,53 +34,62 @@ export class CategoriesService {
       })
     if (!isDuplicate) {
       await this.categoryRepository.save(createCategoryDto)
-      return { name,
-icon,
-group,
-isExpense }
+      return {
+        name,
+        icon,
+        group,
+        isExpense
+      }
     }
   }
 
+  //UpdateCategoryDto add properties UserId
+  async update(updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryRepository.findOne({
+      where: {
+        id: updateCategoryDto.id,
+        isDeleted: false
+      }
+    })
+    if (category) {
+      await this.categoryRepository.update(category.id, updateCategoryDto)
+      let { name, icon, group } = { ...updateCategoryDto }
+      return {
+        name,
+        icon,
+        group
+      }
+    }
+  }
 
-  async findOne(id: number) {
-    // userID only can find it cate
-    let category = await this.categoryRepository.findOne({
+  async delete(id: number) {
+    const category = await this.categoryRepository.findOne({
       where: {
         id: id,
         isDeleted: false
       }
     })
     if (category) {
-      let { userId, name, isExpense, icon, group } = category
-      return { userId,
-name,
-isExpense,
-icon,
-group }
-    }
-    // To Do access denied
-    // To Do can not find
-  }
-
-  async update(updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.categoryRepository.findOne({ where: { id: updateCategoryDto.id,
-isDeleted: false } })
-    if (category) {
-      await this.categoryRepository.update(category.id, updateCategoryDto)
-      let { name, icon, group } = { ...updateCategoryDto }
-      return { name,
-icon,
-group }
-    }
-  }
-
-  async delete(id: number) {
-    const category = await this.categoryRepository.findOne({ where: { id: id,
-isDeleted: false } })
-    if (category) {
       category.isDeleted = true
       await this.categoryRepository.save(category)
     }
+  }
+
+  async findByIdForUser(id: number, userId: number) {
+    let category = await this.categoryRepository.findOne({
+      where: {
+        id: id,
+        isDeleted: false,
+      }
+    })
+    if (category) {
+      if (category.userId == userId) {
+        let { userId, name, isExpense, icon, group } = category
+        return { userId, name, isExpense, icon, group }
+      }
+      else throw new Error('Access Denied')
+    }
+    throw new Error('Not found category')
   }
 }
 

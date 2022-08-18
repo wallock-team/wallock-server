@@ -20,117 +20,88 @@ export class TransactionsService {
     return await this.transactionRepository.find(options)
   }
 
-  async create(createTransactionDto: CreateTransactionDto) {
-    try {
-      const findUser = await this.userService.findOne({where : { id: createTransactionDto.userId, isDeleted: false}})
-      const findCate = await this.cateService.findOne(createTransactionDto.cateId)
-
-      if (!findUser) {
-        throw new Error('Can\'t find User')
-      }
-      if (!findCate) {
-        throw new Error('Can\'t find Category')
-      }
-      if (
-        findUser.balance < createTransactionDto.amount &&
-        findCate.isExpense == true
-      ) {
-        throw new Error('User don\'t have enough money')
-      } else if (findCate.isExpense == true) {
-        findUser.balance -= createTransactionDto.amount
-      } else {
-        findUser.balance += createTransactionDto.amount
-      }
-      await this.userService.update(findUser)
-      return await this.transactionRepository.save(createTransactionDto)
-    } catch (error) {
-      throw new Error(error.message)
+  async create(createTransactionDto: CreateTransactionDto, userId: number) {
+    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const category = await this.cateService.findByIdForUser(createTransactionDto.cateId, userId)
+    
+    if (category.isExpense == true) {
+      user.balance -= createTransactionDto.amount
     }
+    else {
+      user.balance += createTransactionDto.amount
+    }
+    await this.userService.update(user)
+    return await this.transactionRepository.save(createTransactionDto)
   }
 
   async findAllByUserId(userId: number) {
-    try {
-      const findUser = await this.userService.findOne({where : { id: userId, isDeleted: false}})
-      if (!findUser) {
-        throw new Error('Can\'t find User')
+      const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+
+      if (!user) {
+        throw new Error("Can't find User")
       }
-      return await this.transactionRepository.find({
-        where: { userId: userId,
-isDeleted: false }
-      })
-    } catch (error) {
-      throw new Error(error.message)
-    }
+      
+      return await this.transactionRepository.find({ where: { userId: userId, isDeleted: false } })
   }
 
-  async findOne(id: number) {
-    try {
-      const findTrans = await this.transactionRepository.findOne({
-        where: { id: id,
-isDeleted: false }
-      })
-      if (!findTrans) {
-        throw new Error('Can\'t find Transaction')
+  async update(updateTransactionDto: UpdateTransactionDto, userId: number) {
+    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const category = await this.cateService.findByIdForUser(updateTransactionDto.cateId, userId)
+    const currentTransactionCategory = await this.cateService.findByIdForUser(updateTransactionDto.id, userId)
+    const currentTransaction = await this.findByIdForUser(updateTransactionDto.id, userId)
+
+    if (category.isExpense == currentTransactionCategory.isExpense) {
+      const different = updateTransactionDto.amount - currentTransaction.amount
+      if (category.isExpense) {
+        user.balance -= different
       }
-      return findTrans
-    } catch (error) {
-      throw new Error(error.message)
+      else user.balance += different
+    } else {
+      if (category.isExpense) {
+        user.balance = user.balance - updateTransactionDto.amount - currentTransaction.amount
+      }
+      else user.balance = user.balance + updateTransactionDto.amount + currentTransaction.amount
     }
+
+    currentTransaction.amount = updateTransactionDto.amount
+    currentTransaction.cateId = updateTransactionDto.cateId
+    currentTransaction.note = updateTransactionDto.note
+    currentTransaction.date = updateTransactionDto.date
+
+    await this.userService.update(user)
+    await this.transactionRepository.update(currentTransaction.id, currentTransaction)
+    return updateTransactionDto
   }
 
-  async update(updateTransactionDto: UpdateTransactionDto) {
-    try {
-      const findCate = await this.cateService.findOne(updateTransactionDto.cateId)
-      const findTrans = await this.transactionRepository.findOne
-        ({
-          where: {
-            id: updateTransactionDto.transId,
-            isDeleted: false
-          }
-        })
-      const findUser = await this.userService.findOne({where : { id: findTrans.userId, isDeleted: false}})
+  async remove(id: number, userId: number) {
+      const transaction = await this.findByIdForUser(id, userId)
+      const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+      const category = await this.cateService.findByIdForUser(transaction.cateId, userId)
 
-      if (!findCate) {
-        throw new Error('Can\'t find category')
+      if (category.isExpense == true) {
+        user.balance += transaction.amount
       }
-      if (findCate.isExpense == false) {
-        findUser.balance += updateTransactionDto.amount - findTrans.amount
-      } else {
-        findUser.balance += findTrans.amount - updateTransactionDto.amount
+      else {
+        user.balance -= transaction.amount
       }
 
-      findTrans.amount = updateTransactionDto.amount
-      findTrans.cateId = updateTransactionDto.cateId
-      findTrans.note = updateTransactionDto.note
-      findTrans.date = updateTransactionDto.date
-
-      await this.userService.update(findUser)
-      await this.transactionRepository.update(findTrans.id, findTrans)
-      return updateTransactionDto
-    } catch (error) {
-      throw new Error(error.message)
-    }
+      await this.userService.update(user)
+      await this.transactionRepository.remove(transaction)
+      return `Delete transaction with id is #${id} `
   }
 
-  async remove(id: number) {
-    try {
-      const delTrans = await this.transactionRepository.findOne({ where: { id: id, isDeleted: false } })
-      const findUser = await this.userService.findOne({where : { id: delTrans.userId, isDeleted: false}})
-      const findCate = await this.cateService.findOne(delTrans.cateId)
-      if (delTrans) {
-        if (findCate.isExpense == true) {
-          findUser.balance += delTrans.amount
-        } else {
-          findUser.balance -= delTrans.amount
-        }
-        delTrans.isDeleted = true
-
-        await this.userService.update(findUser)
-        await this.transactionRepository.update(delTrans.id, delTrans)
-        return `Delete transaction with id is #${id} `
+  async findByIdForUser(id: number, userId: number): Promise<Transaction> {
+    let transaction = await this.transactionRepository.findOne({
+      where: {
+        id: id,
+        isDeleted: false,
       }
-    } catch (error) {
-      throw new Error(error.message)
+    })
+    if (transaction) {
+      if (transaction.userId == userId)
+        return transaction
+      else throw new Error('Access Denied')
     }
+    throw new Error('Not found Transaction')
   }
 }
