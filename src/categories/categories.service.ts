@@ -4,6 +4,7 @@ import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
+import { initialCategories } from './initialCate'
 
 @Injectable()
 export class CategoriesService {
@@ -90,6 +91,14 @@ export class CategoriesService {
       else throw new Error('Access Denied')
     }
     throw new Error('Not found category')
+  }
+
+  async createInitCate (userId: number){
+      let initialCate = await initialCategories(userId)
+
+      for (let i=0 ; i<initialCate.length ; i++){
+        this.categoryRepository.save(initialCate[i])
+      }
   }
 }
 
