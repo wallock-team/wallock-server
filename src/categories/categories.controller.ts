@@ -10,16 +10,25 @@ export class CategoriesController {
   @Post()
   // @UseGuards(JwtAuthGuard)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
-    let result = await this.categoriesService.create(createCategoryDto)
-    if (result) return result
-    throw new ConflictException('Invalid input')
+    try {
+      let result = await this.categoriesService.create(createCategoryDto)
+      if (result) return result
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   async findAllByUserId(@Req() req) {
     let userId = req.user.id
-    if (req.user) return await this.categoriesService.findAllByUserId(userId)
+    try {
+      if (userId) {
+        return await this.categoriesService.findAllByUserId(userId)
+      }
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   @Get(':id')
@@ -36,15 +45,24 @@ export class CategoriesController {
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  async update(@Body() updateCategoryDto: UpdateCategoryDto) {
-    let result = await this.categoriesService.update(updateCategoryDto)
-    if (result) return result
-    throw new BadRequestException()
+  async update(@Body() updateCategoryDto: UpdateCategoryDto, @Req() req) {
+    let userId = req.user.id
+    try {
+      let result = await this.categoriesService.update(updateCategoryDto, userId)
+      if (result) return result
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param('id') id: number) {
-    return await this.categoriesService.delete(+id)
+  async remove(@Param('id') id: number, @Req() req) {
+    let userId = req.user.id
+    try {
+      return await this.categoriesService.delete(+id, userId)
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 }
