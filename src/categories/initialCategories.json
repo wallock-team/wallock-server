@@ -1,0 +1,128 @@
+ [
+  {
+    "name": "Eating",
+    "isExpense": true,
+    "icon": "Eating",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Rent House",
+    "isExpense": true,
+    "icon": "Rent House",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Water bill",
+    "isExpense": true,
+    "icon": "Water bill",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Telephone bill",
+    "isExpense": true,
+    "icon": "Telephone bill",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Electric bill",
+    "isExpense": true,
+    "icon": "Electric bill",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Gas bill",
+    "isExpense": true,
+    "icon": "Gas bill",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Internet services",
+    "isExpense": true,
+    "icon": "Internet bill",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Other bill",
+    "isExpense": true,
+    "icon": "Other bill",
+    "group": "Monthly Expense"
+  },
+  {
+    "name": "Vehicle maintenance",
+    "isExpense": true,
+    "icon": "vehicle maintenance",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Insurance",
+    "isExpense": true,
+    "icon": "Insurance",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Education",
+    "isExpense": true,
+    "icon": "Education",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Housewares",
+    "isExpense": true,
+    "icon": "Housewares",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Personal stuff",
+    "isExpense": true,
+    "icon": "Personal stuff",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Pet",
+    "isExpense": true,
+    "icon": "Pet",
+    "group": "Up and comer"
+  },
+  {
+    "name": "House service",
+    "isExpense": true,
+    "icon": "House service",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Other expense",
+    "isExpense": true,
+    "icon": "Other expense",
+    "group": "Up and comer"
+  },
+  {
+    "name": "Sport",
+    "isExpense": true,
+    "icon": "Sport",
+    "group": "Fun and Relax"
+  },
+  {
+    "name": "Make Up",
+    "isExpense": true,
+    "icon": "Make Up",
+    "group": "Fun and Relax"
+  },
+  {
+    "name": "Bank interest",
+    "isExpense": false,
+    "icon": "Bank interest",
+    "group": "Invest"
+  },
+  {
+    "name": "Salary",
+    "isExpense": false,
+    "icon": "Salary",
+    "group": "Income"
+  },
+  {
+    "name": "Other income",
+    "isExpense": false,
+    "icon": "Other income",
+    "group": "Income"
+  }
+]

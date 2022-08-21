@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
-import { initialCategories } from './initialCate'
+import initialCategories from "./initialCategories.json"
 
 @Injectable()
 export class CategoriesService {
@@ -72,10 +72,8 @@ export class CategoriesService {
   }
 
   async createInitCate(userId: number) {
-    let initialCate = await initialCategories(userId)
-
-    for (let i = 0; i < initialCate.length; i++) {
-      this.categoryRepository.save(initialCate[i])
+    for (let i = 0; i < initialCategories.length; i++) {
+      this.categoryRepository.insert({userId, ...initialCategories[i]})
     }
   }
 }
