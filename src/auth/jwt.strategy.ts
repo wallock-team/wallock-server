@@ -6,7 +6,7 @@ import { passportJwtSecret } from 'jwks-rsa'
 import { decode } from 'jsonwebtoken'
 import googleOidcIssuerMetadata from './google-oidc-issuer-metadata'
 import mockOidcIssuerMetadata from './mock-oidc-issuer-metadata'
-import { UsersService } from 'src/users/users.service'
+import { UsersService } from '../users/users.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {

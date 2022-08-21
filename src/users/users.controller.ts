@@ -2,7 +2,7 @@ import { Controller, Body, Patch, BadRequestException, Get, Req, UseGuards } fro
 import { UsersService } from './users.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Request } from 'express'
-import JwtAuthGuard from 'src/auth/jwt-auth.guard'
+import JwtAuthGuard from '../auth/jwt-auth.guard'
 
 @Controller('users')
 export class UsersController {

@@ -1,7 +1,7 @@
-import { BaseEntity } from 'src/base.entity'
-import { User } from 'src/users/entities/user.entity'
-import { Transaction } from 'src/transactions/entities/transaction.entity'
 import { Column, Entity, ManyToOne, OneToOne } from 'typeorm'
+import { BaseEntity } from '../../base.entity'
+import { Transaction } from '../../transactions/entities/transaction.entity'
+import { User } from '../../users/entities/user.entity'
 
 @Entity()
 export class Category extends BaseEntity {

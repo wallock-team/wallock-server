@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { CategoriesService } from 'src/categories/categories.service'
-import { UsersService } from 'src/users/users.service'
 import { FindManyOptions, Repository } from 'typeorm'
+import { CategoriesService } from '../categories/categories.service'
+import { UsersService } from '../users/users.service'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { UpdateTransactionDto } from './dto/update-transaction.dto'
 import { Transaction } from './entities/transaction.entity'
@@ -14,7 +14,7 @@ export class TransactionsService {
     private transactionRepository: Repository<Transaction>,
     private userService: UsersService,
     private cateService: CategoriesService
-  ) {}
+  ) { }
 
   async find(options?: FindManyOptions<Transaction>) {
     return await this.transactionRepository.find(options)
@@ -23,7 +23,7 @@ export class TransactionsService {
   async create(createTransactionDto: CreateTransactionDto, userId: number) {
     const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
     const category = await this.cateService.findByIdForUser(createTransactionDto.cateId, userId)
-    
+
     if (category.isExpense == true) {
       user.balance -= createTransactionDto.amount
     }
@@ -31,17 +31,20 @@ export class TransactionsService {
       user.balance += createTransactionDto.amount
     }
     await this.userService.update(user)
-    return await this.transactionRepository.save(createTransactionDto)
+    return await this.transactionRepository.insert({
+      userId,
+      ...createTransactionDto
+    })
   }
 
   async findAllByUserId(userId: number) {
-      const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
 
-      if (!user) {
-        throw new Error("Can't find User")
-      }
-      
-      return await this.transactionRepository.find({ where: { userId: userId, isDeleted: false } })
+    if (!user) {
+      throw new Error("Can't find User")
+    }
+
+    return await this.transactionRepository.find({ where: { userId: userId, isDeleted: false } })
   }
 
   async update(updateTransactionDto: UpdateTransactionDto, userId: number) {
@@ -74,20 +77,20 @@ export class TransactionsService {
   }
 
   async remove(id: number, userId: number) {
-      const transaction = await this.findByIdForUser(id, userId)
-      const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
-      const category = await this.cateService.findByIdForUser(transaction.cateId, userId)
+    const transaction = await this.findByIdForUser(id, userId)
+    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const category = await this.cateService.findByIdForUser(transaction.cateId, userId)
 
-      if (category.isExpense == true) {
-        user.balance += transaction.amount
-      }
-      else {
-        user.balance -= transaction.amount
-      }
+    if (category.isExpense == true) {
+      user.balance += transaction.amount
+    }
+    else {
+      user.balance -= transaction.amount
+    }
 
-      await this.userService.update(user)
-      await this.transactionRepository.remove(transaction)
-      return `Delete transaction with id is #${id} `
+    await this.userService.update(user)
+    await this.transactionRepository.remove(transaction)
+    return `Delete transaction with id is #${id} `
   }
 
   async findByIdForUser(id: number, userId: number): Promise<Transaction> {
@@ -97,11 +100,10 @@ export class TransactionsService {
         isDeleted: false,
       }
     })
-    if (transaction) {
-      if (transaction.userId == userId)
-        return transaction
-      else throw new Error('Access Denied')
-    }
-    throw new Error('Not found Transaction')
+    if (!transaction)
+      throw new Error('Not found Transaction')
+    if (transaction.userId !== userId)
+      throw new Error('Access Denied')
+    return transaction
   }
 }
