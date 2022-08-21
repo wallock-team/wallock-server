@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { TokenSet } from 'openid-client'
 import { User } from 'src/users/entities/user.entity'
-import { UsersService } from './../users/users.service'
+import { UsersService } from '../users/users.service'
 
 @Injectable()
 export default class AuthService {

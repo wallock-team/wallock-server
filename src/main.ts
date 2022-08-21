@@ -1,8 +1,8 @@
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import * as cookieParser from 'cookie-parser'
-import * as session from 'express-session'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
 
 import * as dotenv from 'dotenv'
 dotenv.config()

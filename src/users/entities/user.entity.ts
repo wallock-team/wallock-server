@@ -1,7 +1,7 @@
 import { BaseEntity } from '../../base.entity'
 import { Column, Entity, OneToMany, OneToOne, Unique } from 'typeorm'
-import { Category } from 'src/categories/entities/category.entity'
-import { Transaction } from 'src/transactions/entities/transaction.entity'
+import { Transaction } from '../../transactions/entities/transaction.entity'
+import { Category } from '../../categories/entities/category.entity'
 
 @Entity()
 @Unique(['iss', 'sub'])

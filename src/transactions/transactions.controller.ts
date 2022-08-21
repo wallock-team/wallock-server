@@ -3,7 +3,7 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Between } from "typeorm";
-import JwtAuthGuard from 'src/auth/jwt-auth.guard';
+import JwtAuthGuard from '../auth/jwt-auth.guard';
 
 // TypeORM Query Operators
 export const BetweenDates = (from: Date, to: Date) =>

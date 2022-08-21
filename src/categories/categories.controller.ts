@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, BadRequestException, InternalServerErrorException, ConflictException, Req, UseGuards } from '@nestjs/common'
-import JwtAuthGuard from 'src/auth/jwt-auth.guard'
+import JwtAuthGuard from '../auth/jwt-auth.guard'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'

@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
 import AuthController from './auth.controller'
-import { UsersModule } from './../users/users.module'
 import AuthService from './auth.service'
 import GoogleOidcStrategy from './google-oidc.strategy'
 import MockOidcStrategy from './mock-oidc.strategy'
 import { JwtStrategy } from './jwt.strategy'
+import { UsersModule } from '../users/users.module'
 
 @Module({
   imports: [PassportModule, UsersModule, ConfigModule],

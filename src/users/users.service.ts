@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { CategoriesService } from 'src/categories/categories.service'
 import { FindOneOptions, Repository } from 'typeorm'
+import { CategoriesService } from '../categories/categories.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'

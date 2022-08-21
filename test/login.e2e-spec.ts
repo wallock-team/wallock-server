@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
-import * as request from 'supertest'
+import request from 'supertest'
 import * as MockOidcServer from './mock-oidc-provider'
 import { AppModule } from '../src/app.module'
-import * as cookieParser from 'cookie-parser'
-import * as session from 'express-session'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
 
 describe('Login', () => {
   let app: INestApplication
