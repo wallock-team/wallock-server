@@ -1,3 +1,4 @@
+import { ErrorMessage } from '../error/errorMessage';
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -15,27 +16,38 @@ export class CategoriesService {
 
   async findAllByUserId(userId: number) {
     let categories = await this.categoryRepository.find({
-      where: { userId: userId, isDeleted: false }
+      where: {
+        userId: userId,
+        isDeleted: false
+      }
     })
     if (categories) {
       return categories
     }
-    throw new Error('Not found any category')
-
   }
 
   async create(createCategoryDto: CreateCategoryDto) {
     const { name, userId, icon, group, isExpense } = { ...createCategoryDto }
 
     const isDuplicate = await this.categoryRepository.findOne({
-      where: { userId: userId, name: name, icon: icon, group: group }
+      where: {
+        userId: userId,
+        name: name,
+        icon: icon,
+        group: group
+      }
     })
 
     if (!isDuplicate) {
       await this.categoryRepository.save(createCategoryDto)
-      return { name, icon, group, isExpense }
+      return {
+        name,
+        icon,
+        group,
+        isExpense
+      }
     }
-    throw new Error('Category Duplicate')
+    throw new Error(ErrorMessage.CategoryAlreadyExists)
   }
 
   async update(updateCategoryDto: UpdateCategoryDto, userId: number) {
@@ -44,7 +56,11 @@ export class CategoriesService {
     await this.categoryRepository.update(category.id, updateCategoryDto)
     let { name, icon, group } = { ...updateCategoryDto }
 
-    return { name, icon, group }
+    return {
+      name,
+      icon,
+      group
+    }
   }
 
   async delete(id: number, userId: number) {
@@ -58,17 +74,23 @@ export class CategoriesService {
     let category = await this.categoryRepository.findOne({
       where: {
         id: id,
-        isDeleted: false,
+        isDeleted: false
       }
     })
     if (category) {
       if (category.userId == userId) {
         let { id, name, isExpense, isDeleted, icon, group } = category
-        return { id, name, isDeleted, isExpense, icon, group }
-      }
-      else throw new Error('Access Denied')
+        return {
+          id,
+          name,
+          isDeleted,
+          isExpense,
+          icon,
+          group
+        }
+      } else throw new Error(ErrorMessage.AccessDenied)
     }
-    throw new Error('Not found category')
+    throw new Error(ErrorMessage.NotFoundCategory)
   }
 
   async createInitCate(userId: number) {

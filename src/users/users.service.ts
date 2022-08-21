@@ -1,3 +1,4 @@
+import { ErrorMessage } from '../error/errorMessage';
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindOneOptions, Repository } from 'typeorm'
@@ -40,10 +41,10 @@ export class UsersService {
 
   async findOne(opts?: FindOneOptions) {
     let user = await this.userRepository.findOne(opts)
-    if (user){
+    if (user) {
       return user
     }
-    throw new Error('Not found User')
+    throw new Error(ErrorMessage.NotFoundUser)
   }
 
   async findByIssSub(iss: string, sub: string) {
@@ -51,14 +52,14 @@ export class UsersService {
 sub: sub } })
   }
 
-  async update(updateUserDto: UpdateUserDto) {
+  async update(updateUserDto: UpdateUserDto, userId :number) {
     const find_user = await this.userRepository.findOne({
-      where: { id: updateUserDto.id }
+      where: { id: userId }
     })
     if (find_user) {
       await this.userRepository.update(find_user.id, updateUserDto)
       return await this.userRepository.findOne({
-        where: { id: updateUserDto.id }
+        where: { id: userId }
       })
     }
   }

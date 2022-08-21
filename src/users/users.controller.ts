@@ -3,23 +3,31 @@ import { UsersService } from './users.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Request } from 'express'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
+import { handleError } from '../error/errorHandler'
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async findOne(@Req() req: Request) {
-    if (req.user) return req.user
-    throw new BadRequestException('Not Found User')
+    try {
+      if (req.user) return req.user
+    }
+    catch (err) {
+      handleError(err.Message)
+    }
   }
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  async update(@Body() updateUserDto: UpdateUserDto) {
-    let result = await this.usersService.update(updateUserDto)
-    if (result) return result
-    throw new BadRequestException('Not Found User')
+  async update(@Body() updateUserDto: UpdateUserDto, @Req() req) {
+    let userId = req.user.id
+    try {
+      return await this.usersService.update(updateUserDto, userId)
+    } catch (error) {
+      handleError(error.message)
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { ErrorMessage } from '../error/errorMessage'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindManyOptions, Repository } from 'typeorm'
@@ -21,16 +22,20 @@ export class TransactionsService {
   }
 
   async create(createTransactionDto: CreateTransactionDto, userId: number) {
-    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const user = await this.userService.findOne({
+      where: {
+        id: userId,
+        isDeleted: false
+      }
+    })
     const category = await this.cateService.findByIdForUser(createTransactionDto.cateId, userId)
 
     if (category.isExpense == true) {
       user.balance -= createTransactionDto.amount
-    }
-    else {
+    } else {
       user.balance += createTransactionDto.amount
     }
-    await this.userService.update(user)
+    await this.userService.update(user, userId)
     return await this.transactionRepository.insert({
       userId,
       ...createTransactionDto
@@ -38,17 +43,32 @@ export class TransactionsService {
   }
 
   async findAllByUserId(userId: number) {
-    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const user = await this.userService.findOne({
+      where: {
+        id: userId,
+        isDeleted: false
+      }
+    })
 
     if (!user) {
-      throw new Error("Can't find User")
+      throw new Error(ErrorMessage.NotFoundUser)
     }
 
-    return await this.transactionRepository.find({ where: { userId: userId, isDeleted: false } })
+    return await this.transactionRepository.find({
+      where: {
+        userId: userId,
+        isDeleted: false
+      }
+    })
   }
 
   async update(updateTransactionDto: UpdateTransactionDto, userId: number) {
-    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const user = await this.userService.findOne({
+      where: {
+        id: userId,
+        isDeleted: false
+      }
+    })
     const category = await this.cateService.findByIdForUser(updateTransactionDto.cateId, userId)
     const currentTransactionCategory = await this.cateService.findByIdForUser(updateTransactionDto.id, userId)
     const currentTransaction = await this.findByIdForUser(updateTransactionDto.id, userId)
@@ -57,13 +77,11 @@ export class TransactionsService {
       const different = updateTransactionDto.amount - currentTransaction.amount
       if (category.isExpense) {
         user.balance -= different
-      }
-      else user.balance += different
+      } else user.balance += different
     } else {
       if (category.isExpense) {
         user.balance = user.balance - updateTransactionDto.amount - currentTransaction.amount
-      }
-      else user.balance = user.balance + updateTransactionDto.amount + currentTransaction.amount
+      } else user.balance = user.balance + updateTransactionDto.amount + currentTransaction.amount
     }
 
     currentTransaction.amount = updateTransactionDto.amount
@@ -71,24 +89,28 @@ export class TransactionsService {
     currentTransaction.note = updateTransactionDto.note
     currentTransaction.date = updateTransactionDto.date
 
-    await this.userService.update(user)
+    await this.userService.update(user, userId)
     await this.transactionRepository.update(currentTransaction.id, currentTransaction)
     return updateTransactionDto
   }
 
   async remove(id: number, userId: number) {
     const transaction = await this.findByIdForUser(id, userId)
-    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const user = await this.userService.findOne({
+      where: {
+        id: userId,
+        isDeleted: false
+      }
+    })
     const category = await this.cateService.findByIdForUser(transaction.cateId, userId)
 
     if (category.isExpense == true) {
       user.balance += transaction.amount
-    }
-    else {
+    } else {
       user.balance -= transaction.amount
     }
 
-    await this.userService.update(user)
+    await this.userService.update(user, userId)
     await this.transactionRepository.remove(transaction)
     return `Delete transaction with id is #${id} `
   }
@@ -97,13 +119,11 @@ export class TransactionsService {
     let transaction = await this.transactionRepository.findOne({
       where: {
         id: id,
-        isDeleted: false,
+        isDeleted: false
       }
     })
-    if (!transaction)
-      throw new Error('Not found Transaction')
-    if (transaction.userId !== userId)
-      throw new Error('Access Denied')
+    if (!transaction) throw new Error(ErrorMessage.NotFoundTransaction)
+    if (transaction.userId !== userId) throw new Error(ErrorMessage.AccessDenied)
     return transaction
   }
 }
