@@ -1,9 +1,11 @@
 import { forwardRef, Inject } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy, TokenSet } from 'openid-client'
+import { Issuer, Strategy, TokenSet } from 'openid-client'
 import { User } from 'src/users/entities/user.entity'
 import AuthService from './auth.service'
-import OidcClientsManager from './oidc-clients-manager'
+import mockOidcIssuerMetadata from './mock-oidc-issuer-metadata'
+import { Request } from 'express'
 
 export default class MockOidcStrategy extends PassportStrategy(
   Strategy,
@@ -11,25 +13,35 @@ export default class MockOidcStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly authService: AuthService,
-    @Inject(forwardRef(() => OidcClientsManager))
-    oidcClientsManager: OidcClientsManager
+    @Inject(forwardRef(() => ConfigService))
+    configService: ConfigService
   ) {
+    const clientId = '123'
+    const clientSecret = '123'
+    const client = new new Issuer(mockOidcIssuerMetadata).Client({
+      client_id: clientId,
+      client_secret: clientSecret
+    })
+    const redirectUri =
+      configService.getOrThrow<string>('BASE_URL') + '/auth/login-with-mock'
+
     super({
-      client: oidcClientsManager.getClient('mock'),
+      client,
       params: {
-        redirect_uri: oidcClientsManager.getRedirectUri('mock'),
-        scope: 'openid',
+        redirect_uri: redirectUri,
+        scope: 'openid profile',
         response_type: 'code'
       },
+      passReqToCallback: true,
       usePKCE: false
     })
   }
 
-  async validate(
-    tokenSet: TokenSet,
-    done: (err: any, user?: User) => void
-  ): Promise<void> {
-    const user = await this.authService.getOrCreateUserFromTokenSet(tokenSet)
-    done(null, user)
+  async validate(req: Request, tokenSet: TokenSet): Promise<User> {
+    req.res
+      .cookie('id_token', tokenSet.id_token, { httpOnly: true })
+      .status(200)
+
+    return await this.authService.getOrCreateUserFromTokenSet(tokenSet)
   }
 }

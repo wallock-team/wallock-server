@@ -15,8 +15,8 @@ export class User extends BaseEntity {
   @Column()
   name: string
 
-  @Column()
-  picture: string
+  @Column({ nullable: true })
+  picture?: string
 
   @Column({ default: 0 })
   balance: number

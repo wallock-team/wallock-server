@@ -44,10 +44,10 @@ describe('Test usersModule', () => {
       .expect(201)
       .expect(
         {
-          "name": "Food1",
-          "icon": "smile",
-          "group": "Basic",
-          "isExpense": true
+          'name': 'Food1',
+          'icon': 'smile',
+          'group': 'Basic',
+          'isExpense': true
         }
       )
   })
@@ -71,11 +71,11 @@ describe('Test usersModule', () => {
       .expect(200)
       .expect(
         {
-          "userId": 1,
-          "name": "Food1",
-          "isExpense": true,
-          "icon": "smile",
-          "group": "Basic"
+          'userId': 1,
+          'name': 'Food1',
+          'isExpense': true,
+          'icon': 'smile',
+          'group': 'Basic'
         }
       )
   })
@@ -92,9 +92,9 @@ describe('Test usersModule', () => {
       .send(updateDTO)
       .expect(200)
       .expect({
-        "name": "Food1 updated",
-        "icon": "Food",
-        "group": "Basic"
+        'name': 'Food1 updated',
+        'icon': 'Food',
+        'group': 'Basic'
       })
   })
 

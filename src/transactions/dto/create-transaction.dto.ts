@@ -7,10 +7,11 @@ export class CreateTransactionDto {
     @IsNotEmpty()
     cateId: number
 
-    amount?: number
+    @IsNotEmpty()
+    amount: number
 
     note?: String
 
-    date?: String
+    date?: Date
 }
 

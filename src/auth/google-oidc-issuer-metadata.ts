@@ -2,7 +2,7 @@ import { IssuerMetadata } from 'openid-client'
 
 // Pulled directly from
 // https://accounts.google.com/.well-known/openid-configuration
-const googleIssuerMetadata: IssuerMetadata = {
+const googleOidcIssuerMetadata: IssuerMetadata = {
   claim_types_supported: ['normal'],
   claims_parameter_supported: false,
   grant_types_supported: [
@@ -60,4 +60,4 @@ const googleIssuerMetadata: IssuerMetadata = {
   ]
 }
 
-export default googleIssuerMetadata
+export default googleOidcIssuerMetadata

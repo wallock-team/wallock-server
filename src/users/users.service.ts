@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm'
-
+import { CategoriesService } from 'src/categories/categories.service'
+import { FindOneOptions, Repository } from 'typeorm'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
@@ -10,8 +10,9 @@ import { User } from './entities/user.entity'
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>
-  ) { }
+    private userRepository: Repository<User>,
+    private cateService: CategoriesService
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOne({
@@ -27,7 +28,9 @@ export class UsersService {
         `User with iss '${createUserDto.iss}' and sub '${createUserDto.sub}' is already created`
       )
     } else {
-      return this.userRepository.save(createUserDto)
+      let user = await this.userRepository.save(createUserDto)
+      await this.cateService.createInitCate(user.id)
+      return user
     }
   }
 
@@ -35,19 +38,28 @@ export class UsersService {
     return await this.userRepository.find()
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id: id } })
+  async findOne(opts?: FindOneOptions) {
+    let user = await this.userRepository.findOne(opts)
+    if (user){
+      return user
+    }
+    throw new Error('Not found User')
   }
 
-  async findByIssSub(iss: string, sub: string){
-    return await this.userRepository.findOne({where: {iss: iss, sub: sub}})
+  async findByIssSub(iss: string, sub: string) {
+    return await this.userRepository.findOne({ where: { iss: iss,
+sub: sub } })
   }
 
   async update(updateUserDto: UpdateUserDto) {
-    const find_user = await this.userRepository.findOne({ where: { id: updateUserDto.id } })
+    const find_user = await this.userRepository.findOne({
+      where: { id: updateUserDto.id }
+    })
     if (find_user) {
       await this.userRepository.update(find_user.id, updateUserDto)
-      return await this.userRepository.findOne({ where: { id: updateUserDto.id } })
+      return await this.userRepository.findOne({
+        where: { id: updateUserDto.id }
+      })
     }
   }
 

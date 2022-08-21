@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CategoriesService } from 'src/categories/categories.service';
-import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm'
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { Transaction } from './entities/transaction.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { CategoriesService } from 'src/categories/categories.service'
+import { UsersService } from 'src/users/users.service'
+import { FindManyOptions, Repository } from 'typeorm'
+import { CreateTransactionDto } from './dto/create-transaction.dto'
+import { UpdateTransactionDto } from './dto/update-transaction.dto'
+import { Transaction } from './entities/transaction.entity'
 
 @Injectable()
 export class TransactionsService {
@@ -13,55 +13,95 @@ export class TransactionsService {
     @InjectRepository(Transaction)
     private transactionRepository: Repository<Transaction>,
     private userService: UsersService,
-    private cateService: CategoriesService,
-  ) { }
+    private cateService: CategoriesService
+  ) {}
 
-  async create(createTransactionDto: CreateTransactionDto) {
-    const findUser = await this.userService.findOne(createTransactionDto.userId)
-    const findCate = await this.cateService.findOne(createTransactionDto.cateId)
+  async find(options?: FindManyOptions<Transaction>) {
+    return await this.transactionRepository.find(options)
+  }
 
-    if(!findUser){
-      throw new NotFoundException("Can't find User")
+  async create(createTransactionDto: CreateTransactionDto, userId: number) {
+    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const category = await this.cateService.findByIdForUser(createTransactionDto.cateId, userId)
+    
+    if (category.isExpense == true) {
+      user.balance -= createTransactionDto.amount
     }
-    if(!findCate){
-      throw new NotFoundException("Can't find Category")
+    else {
+      user.balance += createTransactionDto.amount
     }
-
-    if(findUser.balance < createTransactionDto.amount &&
-       findCate.isExpense == true){
-      throw new BadRequestException("User don't have enough money")
-    }
-    else if(findCate.isExpense == true){
-      findUser.balance -= createTransactionDto.amount
-    }
-    else{
-      findUser.balance += createTransactionDto.amount
-    }
-    await this.userService.update(findUser)
+    await this.userService.update(user)
     return await this.transactionRepository.save(createTransactionDto)
   }
 
   async findAllByUserId(userId: number) {
-    const findUser = await this.userService.findOne(userId)
-    if(!findUser){
-      throw new NotFoundException("Can't find User")
+      const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+
+      if (!user) {
+        throw new Error("Can't find User")
+      }
+      
+      return await this.transactionRepository.find({ where: { userId: userId, isDeleted: false } })
+  }
+
+  async update(updateTransactionDto: UpdateTransactionDto, userId: number) {
+    const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+    const category = await this.cateService.findByIdForUser(updateTransactionDto.cateId, userId)
+    const currentTransactionCategory = await this.cateService.findByIdForUser(updateTransactionDto.id, userId)
+    const currentTransaction = await this.findByIdForUser(updateTransactionDto.id, userId)
+
+    if (category.isExpense == currentTransactionCategory.isExpense) {
+      const different = updateTransactionDto.amount - currentTransaction.amount
+      if (category.isExpense) {
+        user.balance -= different
+      }
+      else user.balance += different
+    } else {
+      if (category.isExpense) {
+        user.balance = user.balance - updateTransactionDto.amount - currentTransaction.amount
+      }
+      else user.balance = user.balance + updateTransactionDto.amount + currentTransaction.amount
     }
-    return await this.transactionRepository.find({where: {userId: userId}})
+
+    currentTransaction.amount = updateTransactionDto.amount
+    currentTransaction.cateId = updateTransactionDto.cateId
+    currentTransaction.note = updateTransactionDto.note
+    currentTransaction.date = updateTransactionDto.date
+
+    await this.userService.update(user)
+    await this.transactionRepository.update(currentTransaction.id, currentTransaction)
+    return updateTransactionDto
   }
 
-  async findOne(id: number) {
-    const findTrans = await this.transactionRepository.findOne({where: {id: id}})
-    if(!findTrans){
-      throw new NotFoundException("Can't find Transaction")
+  async remove(id: number, userId: number) {
+      const transaction = await this.findByIdForUser(id, userId)
+      const user = await this.userService.findOne({ where: { id: userId, isDeleted: false } })
+      const category = await this.cateService.findByIdForUser(transaction.cateId, userId)
+
+      if (category.isExpense == true) {
+        user.balance += transaction.amount
+      }
+      else {
+        user.balance -= transaction.amount
+      }
+
+      await this.userService.update(user)
+      await this.transactionRepository.remove(transaction)
+      return `Delete transaction with id is #${id} `
+  }
+
+  async findByIdForUser(id: number, userId: number): Promise<Transaction> {
+    let transaction = await this.transactionRepository.findOne({
+      where: {
+        id: id,
+        isDeleted: false,
+      }
+    })
+    if (transaction) {
+      if (transaction.userId == userId)
+        return transaction
+      else throw new Error('Access Denied')
     }
-    return findTrans
-  }
-
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+    throw new Error('Not found Transaction')
   }
 }
