@@ -1,35 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException, Req, UseGuards } from '@nestjs/common';
-import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { Between } from "typeorm";
-import JwtAuthGuard from '../auth/jwt-auth.guard';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException, Req, UseGuards } from '@nestjs/common'
+import { TransactionsService } from './transactions.service'
+import { CreateTransactionDto } from './dto/create-transaction.dto'
+import { UpdateTransactionDto } from './dto/update-transaction.dto'
+import { Between } from 'typeorm'
+import JwtAuthGuard from '../auth/jwt-auth.guard'
+import { handleError } from '../error/errorHandler'
 
 // TypeORM Query Operators
-export const BetweenDates = (from: Date, to: Date) =>
-  Between(
-    from.getTime(),
-    to.getTime(),
-  );
+export const BetweenDates = (from: Date, to: Date) => Between(
+  from.getTime(),
+  to.getTime(),
+)
 
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(private readonly transactionsService: TransactionsService) { }
 
   @Get('/current')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getCurrentTrans(@Req() req) {
-    let userId = req.cookie.userid
-    
-    var date = new Date();
-    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    console.log(firstDay + " : " + lastDay)
+    let userId = req.user.id
+
+    var date = new Date()
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    console.log(firstDay + ' : ' + lastDay)
 
     const test = await this.transactionsService.find({
       where: {
         userId: userId,
-        date: Between(firstDay, lastDay),
+        date: Between(firstDay, lastDay)
       }
     })
     return test
@@ -37,57 +37,57 @@ export class TransactionsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  createTransaction(@Body() createTransactionDto: CreateTransactionDto, @Req() req) {
+  async createTransaction(@Body() createTransactionDto: CreateTransactionDto, @Req() req) {
     let userId = req.user.id
     try {
-      const trans = this.transactionsService.create(createTransactionDto, userId);
+      const trans = await this.transactionsService.create(createTransactionDto, userId)
       if (trans) return trans
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  getAllTransaction(@Req() req) {
+  async getAllTransaction(@Req() req) {
     let userId = req.user.id
     try {
-      return this.transactionsService.findAllByUserId(userId);
+      return await this.transactionsService.findAllByUserId(userId)
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  getTransaction(@Param('id') id: number, @Req() req) {
+  async getTransaction(@Param('id') id: number, @Req() req) {
     let userId = req.user.id
     try {
-      return this.transactionsService.findByIdForUser(+id, userId);
+      return await this.transactionsService.findByIdForUser(+id, userId)
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  updateTransaction(@Body() updateTransactionDto: UpdateTransactionDto, @Req() req) {
+  async updateTransaction(@Body() updateTransactionDto: UpdateTransactionDto, @Req() req) {
     let userId = req.user.id
     try {
-      return this.transactionsService.update(updateTransactionDto, userId);
+      return await this.transactionsService.update(updateTransactionDto, userId)
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  delTransaction(@Param('id') id: number, @Req() req) {
+  async delTransaction(@Param('id') id: number, @Req() req) {
     let userId = req.user.id
     try {
-      return this.transactionsService.remove(+id, userId);
+      return await this.transactionsService.remove(+id, userId)
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 }

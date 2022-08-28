@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, BadRequestException, InternalServerErrorException, ConflictException, Req, UseGuards } from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
+import { handleError } from '../error/errorHandler'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
@@ -7,14 +8,15 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
+
   @Post()
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     try {
       let result = await this.categoriesService.create(createCategoryDto)
       if (result) return result
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
@@ -27,7 +29,7 @@ export class CategoriesController {
         return await this.categoriesService.findAllByUserId(userId)
       }
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
@@ -39,7 +41,7 @@ export class CategoriesController {
       let category = await this.categoriesService.findByIdForUser(+id, userId)
       if (category) return category
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
@@ -51,7 +53,7 @@ export class CategoriesController {
       let result = await this.categoriesService.update(updateCategoryDto, userId)
       if (result) return result
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 
@@ -62,7 +64,7 @@ export class CategoriesController {
     try {
       return await this.categoriesService.delete(+id, userId)
     } catch (error) {
-      throw new BadRequestException(error.message)
+      handleError(error.message)
     }
   }
 }
