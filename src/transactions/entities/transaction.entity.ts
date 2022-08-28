@@ -23,7 +23,7 @@ export class Transaction extends BaseEntity {
     transformer: {
       from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
       to(jsValue?: unknown) {
-        if (!jsValue) {
+        if (!jsValue) { 
           return null
         } else if (jsValue instanceof Date) {
           return convertDateToMilliesFromEpoch(jsValue)
@@ -43,7 +43,7 @@ export class Transaction extends BaseEntity {
         }
       }
     },
-    default: Date.now()
+    default: Date()
   })
   // @Column({ type: 'date', nullable: true, default: Date()})
   date: Date

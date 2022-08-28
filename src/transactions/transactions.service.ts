@@ -36,7 +36,7 @@ export class TransactionsService {
       user.balance += createTransactionDto.amount
     }
     await this.userService.update(user, userId)
-    return await this.transactionRepository.insert({
+    return await this.transactionRepository.save({
       userId,
       ...createTransactionDto
     })
