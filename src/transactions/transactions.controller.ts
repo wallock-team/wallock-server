@@ -18,21 +18,21 @@ export class TransactionsController {
 
   @Get('/current')
   @UseGuards(JwtAuthGuard)
-  async getCurrentTrans(@Req() req) {
+  async getCurrentMonth(@Req() req) {
     let userId = req.user.id
 
     var date = new Date()
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
-    console.log(firstDay + ' : ' + lastDay)
 
-    const test = await this.transactionsService.find({
+    const currentMonth = await this.transactionsService.find({
+      relations: { categories: true },
       where: {
         userId: userId,
         date: Between(firstDay, lastDay)
       }
     })
-    return test
+    return currentMonth
   }
 
   @Post()
