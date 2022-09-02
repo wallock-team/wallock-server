@@ -16,6 +16,9 @@ export class CategoriesService {
 
   async findAllByUserId(userId: number) {
     let categories = await this.categoryRepository.find({
+      relations: {
+        transaction: true
+      },
       where: {
         userId: userId,
         isDeleted: false
@@ -72,6 +75,9 @@ export class CategoriesService {
 
   async findByIdForUser(id: number, userId: number) {
     let category = await this.categoryRepository.findOne({
+      relations: {
+        transaction: true,
+      },
       where: {
         id: id,
         isDeleted: false
@@ -79,14 +85,15 @@ export class CategoriesService {
     })
     if (category) {
       if (category.userId == userId) {
-        let { id, name, isExpense, isDeleted, icon, group } = category
+        let { id, name, isExpense, isDeleted, icon, group, transaction } = category
         return {
           id,
           name,
           isDeleted,
           isExpense,
           icon,
-          group
+          group,
+          transaction
         }
       } else throw new Error(ErrorMessage.AccessDenied)
     }

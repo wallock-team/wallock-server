@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../base.entity'
-import { Column, Entity, FindOperator, OneToOne } from 'typeorm'
+import { Column, Entity, FindOperator, JoinColumn, ManyToOne } from 'typeorm'
 import { Category } from '../../categories/entities/category.entity'
 import { User } from '../../users/entities/user.entity'
 
@@ -48,10 +48,12 @@ export class Transaction extends BaseEntity {
   // @Column({ type: 'date', nullable: true, default: Date()})
   date: Date
 
-  @OneToOne(() => Category, category => category.transaction)
+  @ManyToOne(() => Category, category => category.transaction)
+  @JoinColumn({ name: "cateId"})
   categories: Category
 
-  @OneToOne(() => User, user => user.transaction)
+  @ManyToOne(() => User, user => user.transaction)
+  @JoinColumn({ name: "userId"})
   user: User
 }
 

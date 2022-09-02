@@ -55,6 +55,9 @@ export class TransactionsService {
     }
 
     return await this.transactionRepository.find({
+      relations: { 
+        categories: true 
+      },
       where: {
         userId: userId,
         isDeleted: false
@@ -117,6 +120,9 @@ export class TransactionsService {
 
   async findByIdForUser(id: number, userId: number): Promise<Transaction> {
     let transaction = await this.transactionRepository.findOne({
+      relations: {
+        categories: true
+      },
       where: {
         id: id,
         isDeleted: false

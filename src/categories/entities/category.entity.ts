@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { BaseEntity } from '../../base.entity'
 import { Transaction } from '../../transactions/entities/transaction.entity'
 import { User } from '../../users/entities/user.entity'
@@ -21,8 +21,10 @@ export class Category extends BaseEntity {
   group: string
 
   @ManyToOne(() => User, user => user.categories)
+  @JoinColumn({ name: "userId"})
   user: User
 
-  @OneToOne(() => Transaction, transaction => transaction.categories)
-  transaction: Transaction
+  @OneToMany(() => Transaction, transaction => transaction.categories)
+  @JoinColumn()
+  transaction: Transaction[]
 }

@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../base.entity'
-import { Column, Entity, OneToMany, OneToOne, Unique } from 'typeorm'
+import { Column, Entity, OneToMany, Unique } from 'typeorm'
 import { Transaction } from '../../transactions/entities/transaction.entity'
 import { Category } from '../../categories/entities/category.entity'
 
@@ -24,6 +24,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Category, category => category.user)
   categories: Category[]
 
-  @OneToOne(() => Transaction, transaction => transaction.user)
-  transaction: Transaction
+  @OneToMany(() => Transaction, transaction => transaction.user)
+  transaction: Transaction[]
 }
