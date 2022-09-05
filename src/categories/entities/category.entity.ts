@@ -6,13 +6,10 @@ import { User } from '../../users/entities/user.entity'
 @Entity()
 export class Category extends BaseEntity {
   @Column()
-  userId: number
-
-  @Column()
   name: string
 
   @Column()
-  isExpense: boolean
+  type: 'income' | 'expense'
 
   @Column()
   icon: string
@@ -20,8 +17,9 @@ export class Category extends BaseEntity {
   @Column()
   group: string
 
-  @ManyToOne(() => User, user => user.categories)
-  @JoinColumn({ name: "userId"})
+  @ManyToOne(() => User, user => user.categories, {
+    cascade: false
+  })
   user: User
 
   @OneToMany(() => Transaction, transaction => transaction.categories)
