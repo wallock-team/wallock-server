@@ -1,19 +1,23 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  VersionColumn
+} from 'typeorm'
 export class BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ default: false })
-  isDeleted: boolean
+  @CreateDateColumn()
+  createdAt: Date
 
-  //timestamp not support in sqlite3
-  // { type: 'timestamp',
-  // nullable: true,
-  // default: new Date() }
-  @Column({
-    type: 'date',
-    nullable: true,
-    default: Date()
-  })
-  createdAt: String
+  @UpdateDateColumn()
+  lastUpdatedAt: Date
+
+  @DeleteDateColumn()
+  deletedAt: Date
+
+  @VersionColumn()
+  version: number
 }
