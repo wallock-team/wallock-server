@@ -4,15 +4,12 @@ export class UpdateCategoryDto {
   @IsNotEmpty()
   id: number
 
-  @IsNotEmpty()
-  name: string
+  name?: string
 
-  @IsNotEmpty()
-  group: string
+  group?: string
 
-  @IsNotEmpty()
   @IsIn(['income', 'expense'])
-  type: 'Income' | 'expense'
+  type?: 'income' | 'expense'
 
   icon?: string
 }
