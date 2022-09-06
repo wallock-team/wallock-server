@@ -1,18 +1,18 @@
-import { ErrorMessage } from '../error/errorMessage';
+import { ErrorMessage } from '../error/errorMessage'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
-import initialCategories from "./initialCategories.json"
+import initialCategories from './initialCategories.json'
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>
-  ) { }
+  ) {}
 
   async findAllByUserId(userId: number) {
     let categories = await this.categoryRepository.find({
@@ -76,7 +76,7 @@ export class CategoriesService {
   async findByIdForUser(id: number, userId: number) {
     let category = await this.categoryRepository.findOne({
       relations: {
-        transaction: true,
+        transaction: true
       },
       where: {
         id: id,
@@ -85,7 +85,8 @@ export class CategoriesService {
     })
     if (category) {
       if (category.userId == userId) {
-        let { id, name, isExpense, isDeleted, icon, group, transaction } = category
+        let { id, name, isExpense, isDeleted, icon, group, transaction } =
+          category
         return {
           id,
           name,
@@ -102,8 +103,10 @@ export class CategoriesService {
 
   async createInitCate(userId: number) {
     for (let i = 0; i < initialCategories.length; i++) {
-      this.categoryRepository.insert({userId, ...initialCategories[i]})
+      this.categoryRepository.insert({
+        userId,
+        ...initialCategories[i]
+      })
     }
   }
 }
-
