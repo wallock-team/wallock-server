@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, BadRequestException, InternalServerErrorException, ConflictException, Req, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  UseGuards
+} from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
 import { handleError } from '../error/errorHandler'
 import { CategoriesService } from './categories.service'
@@ -7,7 +17,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) { }
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -50,7 +60,10 @@ export class CategoriesController {
   async update(@Body() updateCategoryDto: UpdateCategoryDto, @Req() req) {
     let userId = req.user.id
     try {
-      let result = await this.categoriesService.update(updateCategoryDto, userId)
+      let result = await this.categoriesService.update(
+        updateCategoryDto,
+        userId
+      )
       if (result) return result
     } catch (error) {
       handleError(error.message)
