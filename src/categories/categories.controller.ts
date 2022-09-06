@@ -10,7 +10,7 @@ import {
   UseGuards
 } from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
-import { Request } from '../commons'
+import { AuthenticatedRequest } from '../commons'
 import { handleError } from '../error/errorHandler'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
@@ -23,10 +23,10 @@ export class CategoriesController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(
-    @Req() req: Request,
+    @Req() req: AuthenticatedRequest,
     @Body() createCategoryDto: CreateCategoryDto
   ) {
-    return await this.categoriesService.create(createCategoryDto, req.user)
+    return await this.categoriesService.create(req.user, createCategoryDto)
   }
 
   @Get()
@@ -56,17 +56,11 @@ export class CategoriesController {
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  async update(@Body() updateCategoryDto: UpdateCategoryDto, @Req() req) {
-    let userId = req.user.id
-    try {
-      let result = await this.categoriesService.update(
-        updateCategoryDto,
-        userId
-      )
-      if (result) return result
-    } catch (error) {
-      handleError(error.message)
-    }
+  async update(
+    @Req() req: AuthenticatedRequest,
+    @Body() updateCategoryDto: UpdateCategoryDto
+  ) {
+    return await this.categoriesService.update(req.user, updateCategoryDto)
   }
 
   @Delete(':id')
