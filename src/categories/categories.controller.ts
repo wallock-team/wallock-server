@@ -10,6 +10,7 @@ import {
   UseGuards
 } from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
+import { Request } from '../commons'
 import { handleError } from '../error/errorHandler'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
@@ -21,13 +22,11 @@ export class CategoriesController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createCategoryDto: CreateCategoryDto) {
-    try {
-      let result = await this.categoriesService.create(createCategoryDto)
-      if (result) return result
-    } catch (error) {
-      handleError(error.message)
-    }
+  async create(
+    @Req() req: Request,
+    @Body() createCategoryDto: CreateCategoryDto
+  ) {
+    return await this.categoriesService.create(createCategoryDto, req.user)
   }
 
   @Get()

@@ -1,11 +1,12 @@
 import { ErrorMessage } from '../error/errorMessage'
-import { Injectable } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
 import initialCategories from './initialCategories.json'
+import { User } from '../users/entities/user.entity'
 
 @Injectable()
 export class CategoriesService {
@@ -30,30 +31,28 @@ export class CategoriesService {
     }
   }
 
-  async create(createCategoryDto: CreateCategoryDto) {
-    const { name, userId, icon, group, isExpense } = { ...createCategoryDto }
+  async create(createCategoryDto: CreateCategoryDto, user: User) {
+    const { name, type, group } = createCategoryDto
 
-    const isDuplicate = await this.categoryRepository.findOne({
+    const similarCategoryExists = await this.categoryRepository.findOne({
       where: {
         user: {
-          id: userId
+          id: user.id
         },
-        name: name,
-        icon: icon,
-        group: group
+        name,
+        group,
+        type
       }
     })
 
-    if (!isDuplicate) {
-      await this.categoryRepository.save(createCategoryDto)
-      return {
-        name,
-        icon,
-        group,
-        isExpense
-      }
+    if (similarCategoryExists) {
+      throw new ConflictException(
+        'Category must have unique name - type - group.' +
+          `A category with name '${name}', type '${type}', group '${group}' already exists`
+      )
+    } else {
+      return this.categoryRepository.insert(createCategoryDto)
     }
-    throw new Error(ErrorMessage.CategoryAlreadyExists)
   }
 
   async update(updateCategoryDto: UpdateCategoryDto, userId: number) {
