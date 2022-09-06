@@ -1,5 +1,9 @@
 import { ErrorMessage } from '../error/errorMessage'
-import { ConflictException, Injectable } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
@@ -7,6 +11,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
 import initialCategories from './initialCategories.json'
 import { User } from '../users/entities/user.entity'
+import { omit } from 'lodash'
 
 @Injectable()
 export class CategoriesService {
@@ -47,25 +52,44 @@ export class CategoriesService {
 
     if (similarCategoryExists) {
       throw new ConflictException(
-        'Category must have unique name - type - group.' +
-          `A category with name '${name}', type '${type}', group '${group}' already exists`
+        'Category must have unique name - type - group'
       )
     } else {
       return this.categoryRepository.insert(createCategoryDto)
     }
   }
 
-  async update(updateCategoryDto: UpdateCategoryDto, userId: number) {
-    const category = await this.findByIdForUser(updateCategoryDto.id, userId)
+  async update(updateCategoryDto: UpdateCategoryDto, user: User) {
+    const categoryToBeUpdated = await this.categoryRepository.findOne({
+      where: {
+        id: updateCategoryDto.id
+      }
+    })
 
-    await this.categoryRepository.update(category.id, updateCategoryDto)
-    let { name, icon, group } = { ...updateCategoryDto }
-
-    return {
-      name,
-      icon,
-      group
+    if (categoryToBeUpdated.user.id !== user.id) {
+      throw new NotFoundException('Cannot find the requested category')
     }
+
+    const similarCategoryExists = await this.categoryRepository.findOne({
+      where: {
+        name: updateCategoryDto.name ?? categoryToBeUpdated.name,
+        type: updateCategoryDto.type ?? categoryToBeUpdated.type,
+        group: updateCategoryDto.group ?? categoryToBeUpdated.group
+      }
+    })
+
+    if (similarCategoryExists) {
+      throw new ConflictException(
+        'Category must have unique name - type - group'
+      )
+    }
+
+    return await this.categoryRepository.update(
+      {
+        id: updateCategoryDto.id
+      },
+      omit(updateCategoryDto, 'id')
+    )
   }
 
   async delete(id: number, userId: number) {
