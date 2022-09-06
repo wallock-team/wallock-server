@@ -30,24 +30,6 @@ export class CategoriesController {
     return await this.categoriesService.create(req.user, createCategoryDto)
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async findAllByUserId(
-    @Req() req: AuthenticatedRequest,
-    @Query('includes-deleted') includesDeleted?: boolean
-  ) {
-    return await this.categoriesService.findAll(req.user, includesDeleted)
-  }
-
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  async findOne(
-    @Req() req: AuthenticatedRequest,
-    @Param('id') categoryId: number
-  ) {
-    return await this.categoriesService.findOne(req.user, categoryId)
-  }
-
   @Patch()
   @UseGuards(JwtAuthGuard)
   async update(
@@ -62,5 +44,23 @@ export class CategoriesController {
   @HttpCode(204)
   async delete(@Req() req: AuthenticatedRequest, @Param('id') id: number) {
     await this.categoriesService.delete(req.user, id)
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+    @Query('includes-deleted') includesDeleted?: boolean
+  ) {
+    return await this.categoriesService.findAll(req.user, includesDeleted)
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async findOne(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') categoryId: number
+  ) {
+    return await this.categoriesService.findOne(req.user, categoryId)
   }
 }
