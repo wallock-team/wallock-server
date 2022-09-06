@@ -1,4 +1,3 @@
-import { ErrorMessage } from '../error/errorMessage'
 import {
   ConflictException,
   Injectable,
@@ -11,7 +10,8 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
 import initialCategories from './initialCategories.json'
 import { User } from '../users/entities/user.entity'
-import { includes, omit } from 'lodash'
+import { omit } from 'lodash'
+import { ErrorMessage } from '../error/errorMessage'
 
 @Injectable()
 export class CategoriesService {
@@ -130,5 +130,33 @@ export class CategoriesService {
         ...initialCategories[i]
       })
     }
+  }
+
+  /**
+   * @deprecate added back for backward-compatability and refactor purposes only
+   */
+  async findByIdForUser(id: number, userId: number) {
+    let category = await this.categoryRepository.findOne({
+      relations: {
+        transaction: true
+      },
+      where: {
+        id: id
+      }
+    })
+    if (category) {
+      if (category.user.id == userId) {
+        let { id, name, type, icon, group, transaction } = category
+        return {
+          id,
+          name,
+          type,
+          icon,
+          group,
+          transaction
+        }
+      } else throw new Error(ErrorMessage.AccessDenied)
+    }
+    throw new Error(ErrorMessage.NotFoundCategory)
   }
 }
