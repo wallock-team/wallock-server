@@ -20,8 +20,9 @@ export class CategoriesService {
         transaction: true
       },
       where: {
-        userId: userId,
-        isDeleted: false
+        user: {
+          id: userId
+        }
       }
     })
     if (categories) {
@@ -34,7 +35,9 @@ export class CategoriesService {
 
     const isDuplicate = await this.categoryRepository.findOne({
       where: {
-        userId: userId,
+        user: {
+          id: userId
+        },
         name: name,
         icon: icon,
         group: group
@@ -104,7 +107,9 @@ export class CategoriesService {
   async createInitCate(userId: number) {
     for (let i = 0; i < initialCategories.length; i++) {
       this.categoryRepository.insert({
-        userId,
+        user: {
+          id: userId
+        },
         ...initialCategories[i]
       })
     }
