@@ -1,9 +1,17 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique
+} from 'typeorm'
 import { BaseEntity } from '../../base.entity'
 import { Transaction } from '../../transactions/entities/transaction.entity'
 import { User } from '../../users/entities/user.entity'
 
 @Entity()
+@Unique(['name', 'group', 'type'])
 export class Category extends BaseEntity {
   @Column()
   name: string
@@ -12,10 +20,12 @@ export class Category extends BaseEntity {
   type: 'income' | 'expense'
 
   @Column()
-  icon: string
-
-  @Column()
   group: string
+
+  @Column({
+    nullable: true
+  })
+  icon?: string
 
   @ManyToOne(() => User, user => user.categories, {
     cascade: false
