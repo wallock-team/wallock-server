@@ -45,14 +45,11 @@ export class CategoriesController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: number, @Req() req) {
-    let userId = req.user.id
-    try {
-      let category = await this.categoriesService.findByIdForUser(+id, userId)
-      if (category) return category
-    } catch (error) {
-      handleError(error.message)
-    }
+  async findOne(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') categoryId: number
+  ) {
+    return await this.categoriesService.findOne(req.user, categoryId)
   }
 
   @Patch()

@@ -100,6 +100,16 @@ export class CategoriesService {
     await this.categoryRepository.softDelete(id)
   }
 
+  async findOne(user: User, id: number) {
+    const categoryWithGivenId = await this.categoryRepository.findOneBy({ id })
+
+    if (categoryWithGivenId.user.id !== user.id) {
+      throw new NotFoundException('Cannot find requested category')
+    }
+
+    return categoryWithGivenId
+  }
+
   async findByIdForUser(id: number, userId: number) {
     let category = await this.categoryRepository.findOne({
       relations: {
