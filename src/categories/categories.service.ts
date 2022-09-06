@@ -11,7 +11,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
 import initialCategories from './initialCategories.json'
 import { User } from '../users/entities/user.entity'
-import { omit } from 'lodash'
+import { includes, omit } from 'lodash'
 
 @Injectable()
 export class CategoriesService {
@@ -108,6 +108,17 @@ export class CategoriesService {
     }
 
     return categoryWithGivenId
+  }
+
+  async findAll(user: User, includesDeleted?: boolean) {
+    return await this.categoryRepository.find({
+      where: {
+        user: {
+          id: user.id
+        }
+      },
+      withDeleted: includesDeleted
+    })
   }
 
   async createInitCate(userId: number) {
