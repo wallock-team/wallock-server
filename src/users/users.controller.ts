@@ -1,4 +1,4 @@
-import { Controller, Body, Patch, BadRequestException, Get, Req, UseGuards } from '@nestjs/common'
+import { Controller, Body, Patch, Get, Req, UseGuards } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Request } from 'express'
@@ -7,15 +7,14 @@ import { handleError } from '../error/errorHandler'
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async findOne(@Req() req: Request) {
     try {
       if (req.user) return req.user
-    }
-    catch (err) {
+    } catch (err) {
       handleError(err.Message)
     }
   }

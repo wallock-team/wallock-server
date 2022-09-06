@@ -55,8 +55,8 @@ export class TransactionsService {
     }
 
     return await this.transactionRepository.find({
-      relations: { 
-        categories: true 
+      relations: {
+        categories: true
       },
       where: {
         userId: userId,

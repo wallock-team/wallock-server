@@ -23,7 +23,7 @@ export class Transaction extends BaseEntity {
     transformer: {
       from: (millisFromEpoch: number): Date => new Date(millisFromEpoch),
       to(jsValue?: unknown) {
-        if (!jsValue) { 
+        if (!jsValue) {
           return null
         } else if (jsValue instanceof Date) {
           return convertDateToMilliesFromEpoch(jsValue)
@@ -49,11 +49,11 @@ export class Transaction extends BaseEntity {
   date: Date
 
   @ManyToOne(() => Category, category => category.transaction)
-  @JoinColumn({ name: "cateId"})
+  @JoinColumn({ name: 'cateId' })
   categories: Category
 
   @ManyToOne(() => User, user => user.transaction)
-  @JoinColumn({ name: "userId"})
+  @JoinColumn({ name: 'userId' })
   user: User
 }
 
