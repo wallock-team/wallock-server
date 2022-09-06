@@ -110,34 +110,6 @@ export class CategoriesService {
     return categoryWithGivenId
   }
 
-  async findByIdForUser(id: number, userId: number) {
-    let category = await this.categoryRepository.findOne({
-      relations: {
-        transaction: true
-      },
-      where: {
-        id: id,
-        isDeleted: false
-      }
-    })
-    if (category) {
-      if (category.userId == userId) {
-        let { id, name, isExpense, isDeleted, icon, group, transaction } =
-          category
-        return {
-          id,
-          name,
-          isDeleted,
-          isExpense,
-          icon,
-          group,
-          transaction
-        }
-      } else throw new Error(ErrorMessage.AccessDenied)
-    }
-    throw new Error(ErrorMessage.NotFoundCategory)
-  }
-
   async createInitCate(userId: number) {
     for (let i = 0; i < initialCategories.length; i++) {
       this.categoryRepository.insert({
