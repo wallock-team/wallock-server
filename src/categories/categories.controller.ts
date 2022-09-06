@@ -8,7 +8,8 @@ import {
   Delete,
   Req,
   UseGuards,
-  HttpCode
+  HttpCode,
+  Query
 } from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
 import { AuthenticatedRequest } from '../commons'
@@ -32,15 +33,11 @@ export class CategoriesController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAllByUserId(@Req() req) {
-    let userId = req.user.id
-    try {
-      if (userId) {
-        return await this.categoriesService.findAllByUserId(userId)
-      }
-    } catch (error) {
-      handleError(error.message)
-    }
+  async findAllByUserId(
+    @Req() req: AuthenticatedRequest,
+    @Query('includes-deleted') includesDeleted?: boolean
+  ) {
+    return await this.categoriesService.findAll(req.user, includesDeleted)
   }
 
   @Get(':id')
