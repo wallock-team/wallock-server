@@ -36,7 +36,7 @@ export class CategoriesService {
     }
   }
 
-  async create(createCategoryDto: CreateCategoryDto, user: User) {
+  async create(user: User, createCategoryDto: CreateCategoryDto) {
     const { name, type, group } = createCategoryDto
 
     const similarCategoryExists = await this.categoryRepository.findOne({
@@ -59,7 +59,7 @@ export class CategoriesService {
     }
   }
 
-  async update(updateCategoryDto: UpdateCategoryDto, user: User) {
+  async update(user: User, updateCategoryDto: UpdateCategoryDto) {
     const categoryToBeUpdated = await this.categoryRepository.findOne({
       where: {
         id: updateCategoryDto.id
