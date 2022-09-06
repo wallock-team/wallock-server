@@ -85,9 +85,7 @@ export class CategoriesService {
     }
 
     return await this.categoryRepository.update(
-      {
-        id: updateCategoryDto.id
-      },
+      updateCategoryDto.id,
       omit(updateCategoryDto, 'id')
     )
   }
