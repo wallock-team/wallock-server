@@ -15,7 +15,7 @@ export class TransactionsService {
     private transactionRepository: Repository<Transaction>,
     private userService: UsersService,
     private cateService: CategoriesService
-  ) { }
+  ) {}
 
   async find(options?: FindManyOptions<Transaction>) {
     return await this.transactionRepository.find(options)
@@ -28,9 +28,12 @@ export class TransactionsService {
         isDeleted: false
       }
     })
-    const category = await this.cateService.findByIdForUser(createTransactionDto.cateId, userId)
+    const category = await this.cateService.findByIdForUser(
+      createTransactionDto.cateId,
+      userId
+    )
 
-    if (category.isExpense == true) {
+    if (category.type === 'expense') {
       user.balance -= createTransactionDto.amount
     } else {
       user.balance += createTransactionDto.amount
@@ -59,8 +62,7 @@ export class TransactionsService {
         categories: true
       },
       where: {
-        userId: userId,
-        isDeleted: false
+        userId: userId
       }
     })
   }
@@ -72,19 +74,31 @@ export class TransactionsService {
         isDeleted: false
       }
     })
-    const category = await this.cateService.findByIdForUser(updateTransactionDto.cateId, userId)
-    const currentTransactionCategory = await this.cateService.findByIdForUser(updateTransactionDto.id, userId)
-    const currentTransaction = await this.findByIdForUser(updateTransactionDto.id, userId)
+    const category = await this.cateService.findByIdForUser(
+      updateTransactionDto.cateId,
+      userId
+    )
+    const currentTransactionCategory = await this.cateService.findByIdForUser(
+      updateTransactionDto.id,
+      userId
+    )
+    const currentTransaction = await this.findByIdForUser(
+      updateTransactionDto.id,
+      userId
+    )
 
-    if (category.isExpense == currentTransactionCategory.isExpense) {
+    if (category.type === currentTransactionCategory.type) {
       const different = updateTransactionDto.amount - currentTransaction.amount
-      if (category.isExpense) {
+      if (category.type === 'expense') {
         user.balance -= different
       } else user.balance += different
     } else {
-      if (category.isExpense) {
-        user.balance = user.balance - updateTransactionDto.amount - currentTransaction.amount
-      } else user.balance = user.balance + updateTransactionDto.amount + currentTransaction.amount
+      if (category.type === 'expense') {
+        user.balance =
+          user.balance - updateTransactionDto.amount - currentTransaction.amount
+      } else
+        user.balance =
+          user.balance + updateTransactionDto.amount + currentTransaction.amount
     }
 
     currentTransaction.amount = updateTransactionDto.amount
@@ -93,7 +107,10 @@ export class TransactionsService {
     currentTransaction.date = updateTransactionDto.date
 
     await this.userService.update(user, userId)
-    await this.transactionRepository.update(currentTransaction.id, currentTransaction)
+    await this.transactionRepository.update(
+      currentTransaction.id,
+      currentTransaction
+    )
     return updateTransactionDto
   }
 
@@ -105,9 +122,12 @@ export class TransactionsService {
         isDeleted: false
       }
     })
-    const category = await this.cateService.findByIdForUser(transaction.cateId, userId)
+    const category = await this.cateService.findByIdForUser(
+      transaction.cateId,
+      userId
+    )
 
-    if (category.isExpense == true) {
+    if (category.type === 'expense') {
       user.balance += transaction.amount
     } else {
       user.balance -= transaction.amount
@@ -124,12 +144,13 @@ export class TransactionsService {
         categories: true
       },
       where: {
-        id: id,
-        isDeleted: false
+        id: id
       }
     })
     if (!transaction) throw new Error(ErrorMessage.NotFoundTransaction)
-    if (transaction.userId !== userId) throw new Error(ErrorMessage.AccessDenied)
+    if (transaction.userId !== userId) {
+      throw new Error(ErrorMessage.AccessDenied)
+    }
     return transaction
   }
 }
