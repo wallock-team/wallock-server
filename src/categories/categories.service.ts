@@ -90,11 +90,14 @@ export class CategoriesService {
     )
   }
 
-  async delete(id: number, userId: number) {
-    const category = await this.findByIdForUser(id, userId)
+  async delete(user: User, id: number) {
+    const categoryToBeDeleted = await this.categoryRepository.findOneBy({ id })
 
-    category.isDeleted = true
-    await this.categoryRepository.save(category)
+    if (!categoryToBeDeleted || categoryToBeDeleted.user.id !== user.id) {
+      throw new NotFoundException('Cannot find the requested category')
+    }
+
+    await this.categoryRepository.softDelete(id)
   }
 
   async findByIdForUser(id: number, userId: number) {

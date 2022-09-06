@@ -7,7 +7,8 @@ import {
   Param,
   Delete,
   Req,
-  UseGuards
+  UseGuards,
+  HttpCode
 } from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
 import { AuthenticatedRequest } from '../commons'
@@ -65,12 +66,8 @@ export class CategoriesController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param('id') id: number, @Req() req) {
-    let userId = req.user.id
-    try {
-      return await this.categoriesService.delete(+id, userId)
-    } catch (error) {
-      handleError(error.message)
-    }
+  @HttpCode(204)
+  async delete(@Req() req: AuthenticatedRequest, @Param('id') id: number) {
+    await this.categoriesService.delete(req.user, id)
   }
 }
