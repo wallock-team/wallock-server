@@ -1,127 +1,127 @@
- [
+[
   {
     "name": "Eating",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Eating",
     "group": "Monthly Expense"
   },
   {
     "name": "Rent House",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Rent House",
     "group": "Monthly Expense"
   },
   {
     "name": "Water bill",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Water bill",
     "group": "Monthly Expense"
   },
   {
     "name": "Telephone bill",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Telephone bill",
     "group": "Monthly Expense"
   },
   {
     "name": "Electric bill",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Electric bill",
     "group": "Monthly Expense"
   },
   {
     "name": "Gas bill",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Gas bill",
     "group": "Monthly Expense"
   },
   {
     "name": "Internet services",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Internet bill",
     "group": "Monthly Expense"
   },
   {
     "name": "Other bill",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Other bill",
     "group": "Monthly Expense"
   },
   {
     "name": "Vehicle maintenance",
-    "isExpense": true,
+    "type": "expense",
     "icon": "vehicle maintenance",
     "group": "Up and comer"
   },
   {
     "name": "Insurance",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Insurance",
     "group": "Up and comer"
   },
   {
     "name": "Education",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Education",
     "group": "Up and comer"
   },
   {
     "name": "Housewares",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Housewares",
     "group": "Up and comer"
   },
   {
     "name": "Personal stuff",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Personal stuff",
     "group": "Up and comer"
   },
   {
     "name": "Pet",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Pet",
     "group": "Up and comer"
   },
   {
     "name": "House service",
-    "isExpense": true,
+    "type": "expense",
     "icon": "House service",
     "group": "Up and comer"
   },
   {
     "name": "Other expense",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Other expense",
     "group": "Up and comer"
   },
   {
     "name": "Sport",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Sport",
     "group": "Fun and Relax"
   },
   {
     "name": "Make Up",
-    "isExpense": true,
+    "type": "expense",
     "icon": "Make Up",
     "group": "Fun and Relax"
   },
   {
     "name": "Bank interest",
-    "isExpense": false,
+    "type": "income",
     "icon": "Bank interest",
     "group": "Invest"
   },
   {
     "name": "Salary",
-    "isExpense": false,
+    "type": "income",
     "icon": "Salary",
     "group": "Income"
   },
   {
     "name": "Other income",
-    "isExpense": false,
+    "type": "income",
     "icon": "Other income",
     "group": "Income"
   }

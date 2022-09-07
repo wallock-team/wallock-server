@@ -30,7 +30,7 @@ export class UsersService {
       )
     } else {
       let user = await this.userRepository.save(createUserDto)
-      await this.cateService.createInitCate(user.id)
+      await this.cateService.createInitCate(user)
       return user
     }
   }

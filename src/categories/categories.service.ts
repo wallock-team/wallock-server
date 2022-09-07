@@ -121,15 +121,14 @@ export class CategoriesService {
     })
   }
 
-  async createInitCate(userId: number) {
-    for (let i = 0; i < initialCategories.length; i++) {
-      this.categoryRepository.insert({
-        user: {
-          id: userId
-        },
-        ...initialCategories[i]
-      })
-    }
+  async createInitCate(user: User) {
+    await this.categoryRepository.insert(
+      initialCategories.map(c => ({
+        user: user,
+        ...c,
+        type: c.type as 'expense' | 'income'
+      }))
+    )
   }
 
   /**
