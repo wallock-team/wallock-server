@@ -117,7 +117,7 @@ export class CategoriesService {
           id: user.id
         }
       },
-      withDeleted: includesDeleted
+      withDeleted: includesDeleted ? includesDeleted : false
     })
   }
 
