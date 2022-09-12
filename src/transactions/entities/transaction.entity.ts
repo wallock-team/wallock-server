@@ -5,11 +5,6 @@ import { User } from '../../users/entities/user.entity'
 
 @Entity()
 export class Transaction extends BaseEntity {
-  @Column()
-  userId: number
-
-  @Column()
-  cateId: number
 
   @Column({ default: 0 })
   amount: number
@@ -45,15 +40,16 @@ export class Transaction extends BaseEntity {
     },
     default: Date()
   })
-  // @Column({ type: 'date', nullable: true, default: Date()})
   date: Date
 
-  @ManyToOne(() => Category, category => category.transaction)
-  @JoinColumn({ name: 'cateId' })
+  @ManyToOne(() => Category, category => category.transaction, {
+    cascade: false
+  })
   categories: Category
 
-  @ManyToOne(() => User, user => user.transaction)
-  @JoinColumn({ name: 'userId' })
+  @ManyToOne(() => User, user => user.transaction, {
+    cascade: false
+  })
   user: User
 }
 

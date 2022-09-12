@@ -20,25 +20,8 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>
   ) {}
 
-  async findAllByUserId(userId: number) {
-    let categories = await this.categoryRepository.find({
-      relations: {
-        transaction: true
-      },
-      where: {
-        user: {
-          id: userId
-        }
-      }
-    })
-    if (categories) {
-      return categories
-    }
-  }
-
   async create(user: User, createCategoryDto: CreateCategoryDto) {
     const { name, type, group } = createCategoryDto
-
     const similarCategoryExists = await this.categoryRepository.findOne({
       where: {
         user: {
@@ -57,6 +40,16 @@ export class CategoriesService {
     } else {
       return this.categoryRepository.insert(createCategoryDto)
     }
+  }
+
+  async createInitCate(user: User) {
+    await this.categoryRepository.insert(
+      initialCategories.map(c => ({
+        user: user,
+        ...c,
+        type: c.type as 'expense' | 'income'
+      }))
+    )
   }
 
   async update(user: User, updateCategoryDto: UpdateCategoryDto) {
@@ -101,12 +94,17 @@ export class CategoriesService {
   }
 
   async findOne(user: User, id: number) {
-    const categoryWithGivenId = await this.categoryRepository.findOneBy({ id })
+    const categoryWithGivenId = await this.categoryRepository.findOne({
+      relations: {user: true},
+      where:{
+        id: id
+      }
+    })
 
+    if (!categoryWithGivenId) throw new NotFoundException('Can not find transaction')
     if (categoryWithGivenId.user.id !== user.id) {
       throw new NotFoundException('Cannot find requested category')
     }
-
     return categoryWithGivenId
   }
 
@@ -121,23 +119,27 @@ export class CategoriesService {
     })
   }
 
-  async createInitCate(user: User) {
-    await this.categoryRepository.insert(
-      initialCategories.map(c => ({
-        user: user,
-        ...c,
-        type: c.type as 'expense' | 'income'
-      }))
-    )
+  async findAllByUserId(userId: number) {
+    let categories = await this.categoryRepository.find({
+      relations: {
+        transaction: true
+      },
+      where: {
+        user: {
+          id: userId
+        }
+      }
+    })
+    if (categories) {
+      return categories
+    }
   }
 
-  /**
-   * @deprecate added back for backward-compatability and refactor purposes only
-   */
   async findByIdForUser(id: number, userId: number) {
     let category = await this.categoryRepository.findOne({
       relations: {
-        transaction: true
+        transaction: true,
+        user: true
       },
       where: {
         id: id

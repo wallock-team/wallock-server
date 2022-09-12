@@ -33,6 +33,5 @@ export class Category extends BaseEntity {
   user: User
 
   @OneToMany(() => Transaction, transaction => transaction.categories)
-  @JoinColumn()
   transaction: Transaction[]
 }
