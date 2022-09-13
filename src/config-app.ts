@@ -22,4 +22,5 @@ export default function configApp(app: INestApplication) {
         }
       })
     )
+    .enableCors()
 }
