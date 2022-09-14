@@ -3,7 +3,8 @@ import { AppModule } from './app.module'
 import configApp from './config-app'
 
 async function bootstrap() {
-  const app = configApp(await NestFactory.create(AppModule))
+  const app = await NestFactory.create(AppModule)
+  configApp(app)
   await app.listen(3000)
 }
 bootstrap()

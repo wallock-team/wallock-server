@@ -22,5 +22,8 @@ export default function configApp(app: INestApplication) {
         }
       })
     )
-    .enableCors()
+    .enableCors({
+      origin: '*',
+      credentials: true
+    })
 }
