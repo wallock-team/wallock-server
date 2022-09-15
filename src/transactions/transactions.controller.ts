@@ -61,6 +61,7 @@ export class TransactionsController {
     @Req() req: AuthenticatedRequest,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
+      updateTransactionDto.date = new Date(updateTransactionDto.date) 
       return await this.transactionsService.update(updateTransactionDto, req.user)
   }
   @Delete(':id')
