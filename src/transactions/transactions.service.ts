@@ -42,14 +42,14 @@ export class TransactionsService {
     })
   }
 
-  async update(updateTransactionDto: UpdateTransactionDto, user: User) {
+  async update(updateTransactionDto: any, user: User) {
     const findUser = await this.userService.findOne({
       where: {
         id: user.id
       }
     })
     const category = await this.cateService.findByIdForUser(
-      updateTransactionDto.cateId,
+      updateTransactionDto.categories.id,
       user.id
     )
     const currentTransactionCategory = await this.cateService.findByIdForUser(
@@ -76,7 +76,7 @@ export class TransactionsService {
     }
 
     currentTransaction.amount = updateTransactionDto.amount
-    currentTransaction.categories.id = updateTransactionDto.cateId
+    currentTransaction.categories.id = updateTransactionDto.categories.id
     currentTransaction.note = updateTransactionDto.note
     currentTransaction.date = updateTransactionDto.date
 

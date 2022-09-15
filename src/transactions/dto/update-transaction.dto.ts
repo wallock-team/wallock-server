@@ -4,9 +4,6 @@ export class UpdateTransactionDto {
     @IsNotEmpty()
     id: number
 
-    @IsNotEmpty()
-    cateId: number
-
     amount?: number
 
     note?: String
