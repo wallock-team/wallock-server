@@ -14,21 +14,15 @@ import {
 import { TransactionsService } from './transactions.service'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { UpdateTransactionDto } from './dto/update-transaction.dto'
-import { Between, DataSource } from 'typeorm'
+import { Between } from 'typeorm'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
-import { handleError } from '../error/errorHandler'
 import { AuthenticatedRequest } from '../commons'
-import { User } from '../users/entities/user.entity'
-
-// TypeORM Query Operators
-export const BetweenDates = (from: Date, to: Date) =>
-  Between(from.getTime(), to.getTime())
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
   
-  @Get('/current')
+  @Get('/current-month')
   @UseGuards(JwtAuthGuard)
   async getCurrentMonth(@Req() req: AuthenticatedRequest) {
     var date = new Date()
