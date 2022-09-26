@@ -1,11 +1,9 @@
-import { ErrorMessage } from '../error/errorMessage'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindManyOptions, Repository } from 'typeorm'
 import { CategoriesService } from '../categories/categories.service'
 import { UsersService } from '../users/users.service'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
-import { UpdateTransactionDto } from './dto/update-transaction.dto'
 import { Transaction } from './entities/transaction.entity'
 import { User } from '../users/entities/user.entity'
 
@@ -16,7 +14,7 @@ export class TransactionsService {
     private transactionRepository: Repository<Transaction>,
     private userService: UsersService,
     private cateService: CategoriesService
-  ) { }
+  ) {}
 
   async create(user: User, createTransactionDto: CreateTransactionDto) {
     const findUser = await this.userService.findOne({
@@ -69,10 +67,13 @@ export class TransactionsService {
     } else {
       if (category.type === 'expense') {
         findUser.balance =
-          findUser.balance - updateTransactionDto.amount - currentTransaction.amount
-      } else
-        findUser.balance =
-          findUser.balance + updateTransactionDto.amount + currentTransaction.amount
+          findUser.balance -
+          updateTransactionDto.amount -
+          currentTransaction.amount
+      } else findUser.balance =
+          findUser.balance +
+          updateTransactionDto.amount +
+          currentTransaction.amount
     }
 
     currentTransaction.amount = updateTransactionDto.amount
@@ -148,7 +149,7 @@ export class TransactionsService {
         id: id
       }
     })
-    if (!transaction) throw new NotFoundException("Not found transaction")
+    if (!transaction) throw new NotFoundException('Not found transaction')
     return transaction
   }
 }

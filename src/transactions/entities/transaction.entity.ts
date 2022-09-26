@@ -1,11 +1,10 @@
 import { BaseEntity } from '../../base.entity'
-import { Column, Entity, FindOperator, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, FindOperator, ManyToOne } from 'typeorm'
 import { Category } from '../../categories/entities/category.entity'
 import { User } from '../../users/entities/user.entity'
 
 @Entity()
 export class Transaction extends BaseEntity {
-
   @Column({ default: 0 })
   amount: number
 

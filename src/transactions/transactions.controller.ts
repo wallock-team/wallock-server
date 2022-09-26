@@ -21,7 +21,7 @@ import { AuthenticatedRequest } from '../commons'
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
-  
+
   @Get('/current-month')
   @UseGuards(JwtAuthGuard)
   async getCurrentMonth(@Req() req: AuthenticatedRequest) {
@@ -32,7 +32,7 @@ export class TransactionsController {
     const currentMonth = await this.transactionsService.find({
       relations: { categories: true },
       where: {
-        user:{
+        user: {
           id: req.user.id
         },
         date: Between(firstDay, lastDay)
@@ -40,24 +40,27 @@ export class TransactionsController {
     })
     return currentMonth
   }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   async createTransaction(
     @Req() req: AuthenticatedRequest,
     @Body() createTransactionDto: CreateTransactionDto
   ) {
-    createTransactionDto.date = new Date();
+    createTransactionDto.date = new Date()
     return await this.transactionsService.create(req.user, createTransactionDto)
   }
+
   @Patch()
   @UseGuards(JwtAuthGuard)
   async updateTransaction(
     @Req() req: AuthenticatedRequest,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
-      updateTransactionDto.date = new Date(updateTransactionDto.date) 
+      updateTransactionDto.date = new Date(updateTransactionDto.date)
       return await this.transactionsService.update(updateTransactionDto, req.user)
   }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
@@ -85,5 +88,4 @@ export class TransactionsController {
   ) {
       return await this.transactionsService.findByIdForUser(req.user, id)
   }
-
 }

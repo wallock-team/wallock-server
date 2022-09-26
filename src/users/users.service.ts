@@ -48,7 +48,8 @@ export class UsersService {
   }
 
   async findByIssSub(iss: string, sub: string) {
-    return await this.userRepository.findOne({ where: { iss: iss, sub: sub } })
+    return await this.userRepository.findOne({ where: { iss: iss,
+sub: sub } })
   }
 
   async update(updateUserDto: UpdateUserDto, userId: number) {
