@@ -1,4 +1,4 @@
-import { ErrorMessage } from '../error/errorMessage';
+import { ErrorMessage } from '../error/errorMessage'
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindOneOptions, Repository } from 'typeorm'
@@ -30,7 +30,7 @@ export class UsersService {
       )
     } else {
       let user = await this.userRepository.save(createUserDto)
-      await this.cateService.createInitCate(user.id)
+      await this.cateService.createInitCate(user)
       return user
     }
   }
@@ -48,11 +48,10 @@ export class UsersService {
   }
 
   async findByIssSub(iss: string, sub: string) {
-    return await this.userRepository.findOne({ where: { iss: iss,
-sub: sub } })
+    return await this.userRepository.findOne({ where: { iss: iss, sub: sub } })
   }
 
-  async update(updateUserDto: UpdateUserDto, userId :number) {
+  async update(updateUserDto: UpdateUserDto, userId: number) {
     const find_user = await this.userRepository.findOne({
       where: { id: userId }
     })

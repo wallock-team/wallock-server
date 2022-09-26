@@ -1,15 +1,15 @@
-import { IsNotEmpty } from 'class-validator'
+import { IsIn, IsNotEmpty } from 'class-validator'
 
 export class UpdateCategoryDto {
-    @IsNotEmpty()
-    id: number
+  @IsNotEmpty()
+  id: number
 
-    @IsNotEmpty()
-    name: string
+  name?: string
 
-    @IsNotEmpty()
-    icon: string
+  group?: string
 
-    @IsNotEmpty()
-    group: string
+  @IsIn(['income', 'expense'])
+  type?: 'income' | 'expense'
+
+  icon?: string
 }

@@ -1,18 +1,123 @@
-import { ErrorMessage } from '../error/errorMessage';
-import { Injectable } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from './entities/category.entity'
-import initialCategories from "./initialCategories.json"
+import initialCategories from './initialCategories.json'
+import { User } from '../users/entities/user.entity'
+import { omit } from 'lodash'
+import { ErrorMessage } from '../error/errorMessage'
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>
-  ) { }
+  ) {}
+
+  async create(user: User, createCategoryDto: CreateCategoryDto) {
+    const { name, type, group } = createCategoryDto
+    const similarCategoryExists = await this.categoryRepository.findOne({
+      where: {
+        user: {
+          id: user.id
+        },
+        name,
+        group,
+        type
+      }
+    })
+
+    if (similarCategoryExists) {
+      throw new ConflictException(
+        'Category must have unique name - type - group'
+      )
+    } else {
+      return this.categoryRepository.insert(createCategoryDto)
+    }
+  }
+
+  async createInitCate(user: User) {
+    await this.categoryRepository.insert(
+      initialCategories.map(c => ({
+        user: user,
+        ...c,
+        type: c.type as 'expense' | 'income'
+      }))
+    )
+  }
+
+  async update(user: User, updateCategoryDto: UpdateCategoryDto) {
+    const categoryToBeUpdated = await this.categoryRepository.findOne({
+      where: {
+        id: updateCategoryDto.id
+      }
+    })
+
+    if (categoryToBeUpdated.user.id !== user.id) {
+      throw new NotFoundException('Cannot find the requested category')
+    }
+
+    const similarCategoryExists = await this.categoryRepository.findOne({
+      where: {
+        name: updateCategoryDto.name ?? categoryToBeUpdated.name,
+        type: updateCategoryDto.type ?? categoryToBeUpdated.type,
+        group: updateCategoryDto.group ?? categoryToBeUpdated.group
+      }
+    })
+
+    if (similarCategoryExists) {
+      throw new ConflictException(
+        'Category must have unique name - type - group'
+      )
+    }
+
+    return await this.categoryRepository.update(
+      updateCategoryDto.id,
+      omit(updateCategoryDto, 'id')
+    )
+  }
+
+  async delete(user: User, id: number) {
+    const categoryToBeDeleted = await this.categoryRepository.findOneBy({ id })
+
+    if (!categoryToBeDeleted || categoryToBeDeleted.user.id !== user.id) {
+      throw new NotFoundException('Cannot find the requested category')
+    }
+
+    await this.categoryRepository.softDelete(id)
+  }
+
+  async findOne(user: User, id: number) {
+    const categoryWithGivenId = await this.categoryRepository.findOne({
+      relations: {user: true},
+      where:{
+        id: id
+      }
+    })
+
+    if (!categoryWithGivenId) throw new NotFoundException('Can not find transaction')
+    if (categoryWithGivenId.user.id !== user.id) {
+      throw new NotFoundException('Cannot find requested category')
+    }
+    return categoryWithGivenId
+  }
+
+  async findAll(user: User, includesDeleted?: boolean) {
+    return await this.categoryRepository.find({
+      where: {
+        user: {
+          id: user.id
+        }
+      },
+      withDeleted: includesDeleted ? includesDeleted : false
+    })
+  }
 
   async findAllByUserId(userId: number) {
     let categories = await this.categoryRepository.find({
@@ -20,8 +125,9 @@ export class CategoriesService {
         transaction: true
       },
       where: {
-        userId: userId,
-        isDeleted: false
+        user: {
+          id: userId
+        }
       }
     })
     if (categories) {
@@ -29,68 +135,23 @@ export class CategoriesService {
     }
   }
 
-  async create(createCategoryDto: CreateCategoryDto) {
-    const { name, userId, icon, group, isExpense } = { ...createCategoryDto }
-
-    const isDuplicate = await this.categoryRepository.findOne({
-      where: {
-        userId: userId,
-        name: name,
-        icon: icon,
-        group: group
-      }
-    })
-
-    if (!isDuplicate) {
-      await this.categoryRepository.save(createCategoryDto)
-      return {
-        name,
-        icon,
-        group,
-        isExpense
-      }
-    }
-    throw new Error(ErrorMessage.CategoryAlreadyExists)
-  }
-
-  async update(updateCategoryDto: UpdateCategoryDto, userId: number) {
-    const category = await this.findByIdForUser(updateCategoryDto.id, userId)
-
-    await this.categoryRepository.update(category.id, updateCategoryDto)
-    let { name, icon, group } = { ...updateCategoryDto }
-
-    return {
-      name,
-      icon,
-      group
-    }
-  }
-
-  async delete(id: number, userId: number) {
-    const category = await this.findByIdForUser(id, userId)
-
-    category.isDeleted = true
-    await this.categoryRepository.save(category)
-  }
-
   async findByIdForUser(id: number, userId: number) {
     let category = await this.categoryRepository.findOne({
       relations: {
         transaction: true,
+        user: true
       },
       where: {
-        id: id,
-        isDeleted: false
+        id: id
       }
     })
     if (category) {
-      if (category.userId == userId) {
-        let { id, name, isExpense, isDeleted, icon, group, transaction } = category
+      if (category.user.id == userId) {
+        let { id, name, type, icon, group, transaction } = category
         return {
           id,
           name,
-          isDeleted,
-          isExpense,
+          type,
           icon,
           group,
           transaction
@@ -99,11 +160,4 @@ export class CategoriesService {
     }
     throw new Error(ErrorMessage.NotFoundCategory)
   }
-
-  async createInitCate(userId: number) {
-    for (let i = 0; i < initialCategories.length; i++) {
-      this.categoryRepository.insert({userId, ...initialCategories[i]})
-    }
-  }
 }
-

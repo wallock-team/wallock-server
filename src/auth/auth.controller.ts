@@ -17,6 +17,12 @@ import { ConfigService } from '@nestjs/config'
 export default class AuthController {
   constructor(private readonly configService: ConfigService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('am-i-logged-in')
+  amILoggedIn(@Req() req: any) {
+    return req.user
+  }
+
   @Get('login/social-login/:issuer')
   socialLogin(
     @Param('issuer') issuer: string,

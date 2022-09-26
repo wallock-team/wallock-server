@@ -1,70 +1,66 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, BadRequestException, InternalServerErrorException, ConflictException, Req, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  UseGuards,
+  HttpCode,
+  Query
+} from '@nestjs/common'
 import JwtAuthGuard from '../auth/jwt-auth.guard'
-import { handleError } from '../error/errorHandler'
+import { AuthenticatedRequest } from '../commons'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) { }
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createCategoryDto: CreateCategoryDto) {
-    try {
-      let result = await this.categoriesService.create(createCategoryDto)
-      if (result) return result
-    } catch (error) {
-      handleError(error.message)
-    }
-  }
-
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async findAllByUserId(@Req() req) {
-    let userId = req.user.id
-    try {
-      if (userId) {
-        return await this.categoriesService.findAllByUserId(userId)
-      }
-    } catch (error) {
-      handleError(error.message)
-    }
-  }
-
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: number, @Req() req) {
-    let userId = req.user.id
-    try {
-      let category = await this.categoriesService.findByIdForUser(+id, userId)
-      if (category) return category
-    } catch (error) {
-      handleError(error.message)
-    }
+  async create(
+    @Req() req: AuthenticatedRequest,
+    @Body() createCategoryDto: CreateCategoryDto
+  ) {
+    return await this.categoriesService.create(req.user, createCategoryDto)
   }
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  async update(@Body() updateCategoryDto: UpdateCategoryDto, @Req() req) {
-    let userId = req.user.id
-    try {
-      let result = await this.categoriesService.update(updateCategoryDto, userId)
-      if (result) return result
-    } catch (error) {
-      handleError(error.message)
-    }
+  async update(
+    @Req() req: AuthenticatedRequest,
+    @Body() updateCategoryDto: UpdateCategoryDto
+  ) {
+    return await this.categoriesService.update(req.user, updateCategoryDto)
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param('id') id: number, @Req() req) {
-    let userId = req.user.id
-    try {
-      return await this.categoriesService.delete(+id, userId)
-    } catch (error) {
-      handleError(error.message)
-    }
+  @HttpCode(204)
+  async delete(@Req() req: AuthenticatedRequest, @Param('id') id: number) {
+    await this.categoriesService.delete(req.user, id)
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+    @Query('includes-deleted') includesDeleted?: boolean
+  ) {
+    return await this.categoriesService.findAll(req.user, includesDeleted)
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async findOne(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') categoryId: number
+  ) {
+    return await this.categoriesService.findOne(req.user, categoryId)
   }
 }

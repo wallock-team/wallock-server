@@ -12,8 +12,10 @@ export class User extends BaseEntity {
   @Column()
   sub: string
 
-  @Column()
-  name: string
+  @Column({
+    nullable: true
+  })
+  name?: string
 
   @Column({ nullable: true })
   picture?: string
