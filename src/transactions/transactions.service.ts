@@ -23,7 +23,7 @@ export class TransactionsService {
       }
     })
     const category = await this.cateService.findByIdForUser(
-      createTransactionDto.cateId,
+      createTransactionDto.categoryId,
       user.id
     )
 
@@ -35,7 +35,7 @@ export class TransactionsService {
     await this.userService.update(findUser, user.id)
     return await this.transactionRepository.insert({
       user: { id: user.id },
-      categories: { id: createTransactionDto.cateId },
+      categories: { id: createTransactionDto.categoryId },
       ...createTransactionDto
     })
   }
@@ -70,7 +70,8 @@ export class TransactionsService {
           findUser.balance -
           updateTransactionDto.amount -
           currentTransaction.amount
-      } else findUser.balance =
+      } else
+        findUser.balance =
           findUser.balance +
           updateTransactionDto.amount +
           currentTransaction.amount
