@@ -25,6 +25,6 @@ export class Category extends BaseEntity {
   })
   user: User
 
-  @OneToMany(() => Transaction, transaction => transaction.categories)
+  @OneToMany(() => Transaction, transaction => transaction.category)
   transaction: Transaction[]
 }

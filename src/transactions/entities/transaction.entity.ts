@@ -44,7 +44,7 @@ export class Transaction extends BaseEntity {
   @ManyToOne(() => Category, category => category.transaction, {
     cascade: false
   })
-  categories: Category
+  category: Category
 
   @ManyToOne(() => User, user => user.transaction, {
     cascade: false
