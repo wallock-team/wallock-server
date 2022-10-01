@@ -23,7 +23,7 @@ export class TransactionsService {
       }
     })
     const category = await this.cateService.findByIdForUser(
-      createTransactionDto.cateId,
+      createTransactionDto.categoryId,
       user.id
     )
 
@@ -35,7 +35,7 @@ export class TransactionsService {
     await this.userService.update(findUser, user.id)
     return await this.transactionRepository.insert({
       user: { id: user.id },
-      categories: { id: createTransactionDto.cateId },
+      category: { id: createTransactionDto.categoryId },
       ...createTransactionDto
     })
   }
@@ -70,14 +70,15 @@ export class TransactionsService {
           findUser.balance -
           updateTransactionDto.amount -
           currentTransaction.amount
-      } else findUser.balance =
+      } else
+        findUser.balance =
           findUser.balance +
           updateTransactionDto.amount +
           currentTransaction.amount
     }
 
     currentTransaction.amount = updateTransactionDto.amount
-    currentTransaction.categories.id = updateTransactionDto.categories.id
+    currentTransaction.category.id = updateTransactionDto.categories.id
     currentTransaction.note = updateTransactionDto.note
     currentTransaction.date = updateTransactionDto.date
 
@@ -97,7 +98,7 @@ export class TransactionsService {
       }
     })
     const category = await this.cateService.findByIdForUser(
-      transaction.categories.id,
+      transaction.category.id,
       user.id
     )
 
@@ -129,7 +130,7 @@ export class TransactionsService {
 
     return await this.transactionRepository.find({
       relations: {
-        categories: true
+        category: true
       },
       where: {
         user: {
@@ -143,7 +144,7 @@ export class TransactionsService {
   async findByIdForUser(user: User, id: number): Promise<Transaction> {
     let transaction = await this.transactionRepository.findOne({
       relations: {
-        categories: true
+        category: true
       },
       where: {
         id: id

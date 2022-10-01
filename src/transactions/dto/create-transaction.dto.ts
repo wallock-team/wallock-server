@@ -1,14 +1,13 @@
 import { IsNotEmpty } from 'class-validator'
 
 export class CreateTransactionDto {
-    @IsNotEmpty()
-    cateId: number
+  @IsNotEmpty()
+  categoryId: number
 
-    @IsNotEmpty()
-    amount: number
+  @IsNotEmpty()
+  amount: number
 
-    note?: String
+  note?: String
 
-    date?: Date
+  date?: Date
 }
-

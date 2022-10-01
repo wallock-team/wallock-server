@@ -30,7 +30,7 @@ export class TransactionsController {
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
 
     const currentMonth = await this.transactionsService.find({
-      relations: { categories: true },
+      relations: { category: true },
       where: {
         user: {
           id: req.user.id
@@ -55,10 +55,10 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   async updateTransaction(
     @Req() req: AuthenticatedRequest,
-    @Body() updateTransactionDto: UpdateTransactionDto,
+    @Body() updateTransactionDto: UpdateTransactionDto
   ) {
-      updateTransactionDto.date = new Date(updateTransactionDto.date)
-      return await this.transactionsService.update(updateTransactionDto, req.user)
+    updateTransactionDto.date = new Date(updateTransactionDto.date)
+    return await this.transactionsService.update(updateTransactionDto, req.user)
   }
 
   @Delete(':id')
@@ -68,7 +68,7 @@ export class TransactionsController {
     @Req() req: AuthenticatedRequest,
     @Param('id') id: number
   ) {
-      return await this.transactionsService.remove(req.user, id)
+    return await this.transactionsService.remove(req.user, id)
   }
 
   @Get()
@@ -77,7 +77,10 @@ export class TransactionsController {
     @Req() req: AuthenticatedRequest,
     @Query('includes-deleted') includesDeleted?: boolean
   ) {
-      return await this.transactionsService.findAllByUserId(req.user, includesDeleted)
+    return await this.transactionsService.findAllByUserId(
+      req.user,
+      includesDeleted
+    )
   }
 
   @Get(':id')
@@ -86,6 +89,6 @@ export class TransactionsController {
     @Req() req: AuthenticatedRequest,
     @Param('id') id: number
   ) {
-      return await this.transactionsService.findByIdForUser(req.user, id)
+    return await this.transactionsService.findByIdForUser(req.user, id)
   }
 }
