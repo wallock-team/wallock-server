@@ -47,7 +47,7 @@ export class TransactionsService {
       }
     })
     const category = await this.cateService.findByIdForUser(
-      updateTransactionDto.categories.id,
+      updateTransactionDto.categoryId,
       user.id
     )
     const currentTransactionCategory = await this.cateService.findByIdForUser(
@@ -78,7 +78,7 @@ export class TransactionsService {
     }
 
     currentTransaction.amount = updateTransactionDto.amount
-    currentTransaction.category.id = updateTransactionDto.categories.id
+    currentTransaction.category.id = updateTransactionDto.categoryId
     currentTransaction.note = updateTransactionDto.note
     currentTransaction.date = updateTransactionDto.date
 
