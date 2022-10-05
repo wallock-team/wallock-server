@@ -38,7 +38,10 @@ export class CategoriesService {
         'Category must have unique name - type - group'
       )
     } else {
-      return this.categoryRepository.insert(createCategoryDto)
+      return await this.categoryRepository.insert({
+        ...createCategoryDto,
+        user: { id: user.id }
+      })
     }
   }
 
