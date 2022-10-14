@@ -1,28 +1,33 @@
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock'
-import { Repository } from 'typeorm'
 import { CategoriesService } from './categories.service'
 import { Category } from './entities/category.entity'
 
 const moduleMocker = new ModuleMocker(global)
 
+const mockedCategoryRepository = {}
+
 describe('Categories service', () => {
   let service: CategoriesService
 
+  describe('Creating category', () => {
+    it('Case 1', async () => {})
+  })
+  describe('Updating category', () => {
+    it('Case 1', async () => {})
+  })
+  describe('Deleting category', () => {
+    it('Case 1', async () => {})
+  })
+
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        CategoriesService,
-        {
-          provide: getRepositoryToken(Category),
-          useValue: {}
-        }
-      ]
+      providers: [CategoriesService]
     })
       .useMocker(token => {
-        if (token === Repository<Category>) {
-          return {}
+        if (token === getRepositoryToken(Category)) {
+          return mockedCategoryRepository
         }
         if (typeof token === 'function') {
           const mockMetadata = moduleMocker.getMetadata(
@@ -36,6 +41,4 @@ describe('Categories service', () => {
 
     service = moduleRef.get(CategoriesService)
   })
-
-  it('', async () => {})
 })
