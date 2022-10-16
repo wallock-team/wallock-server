@@ -53,22 +53,30 @@ export class CategoriesService {
     )
   }
 
-  async update(user: User, updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    user: User,
+    updateCategoryDto: UpdateCategoryDto
+  ): Promise<Category> {
     const categoryToBeUpdated = await this.categoryRepository.findOne({
       where: {
         id: updateCategoryDto.id
       }
     })
 
-    if (categoryToBeUpdated.user.id !== user.id) {
+    if (!categoryToBeUpdated) {
+      throw new CategoryNotExistException()
+    }
+
+    if (categoryToBeUpdated.userId !== user.id) {
       throw new CategoryNotBelongToUserException()
     }
 
     const similarCategoryExists = await this.categoryRepository.findOne({
       where: {
         name: updateCategoryDto.name ?? categoryToBeUpdated.name,
-        type: updateCategoryDto.type ?? categoryToBeUpdated.type,
-        group: updateCategoryDto.group ?? categoryToBeUpdated.group
+        type: categoryToBeUpdated.type,
+        group: updateCategoryDto.group ?? categoryToBeUpdated.group,
+        userId: user.id
       }
     })
 
@@ -76,10 +84,12 @@ export class CategoriesService {
       throw new DuplicatedCategoryException()
     }
 
-    return await this.categoryRepository.update(
+    await this.categoryRepository.update(
       updateCategoryDto.id,
       omit(updateCategoryDto, 'id')
     )
+
+    return await this.categoryRepository.findOneBy({ id: updateCategoryDto.id })
   }
 
   async delete(user: User, id: number) {
