@@ -4,7 +4,7 @@ import { Transaction } from '../../transactions/entities/transaction.entity'
 import { User } from '../../users/entities/user.entity'
 
 @Entity()
-@Unique(['name', 'group', 'type'])
+@Unique(['name', 'group', 'type', 'userId'])
 export class Category extends BaseEntity {
   @Column()
   name: string
@@ -19,6 +19,9 @@ export class Category extends BaseEntity {
     nullable: true
   })
   icon?: string
+
+  @Column()
+  userId: number
 
   @ManyToOne(() => User, user => user.categories, {
     cascade: false
