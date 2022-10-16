@@ -37,10 +37,16 @@ export class CategoriesController {
     @Param('id') id: number,
     @Body() updateCategoryDto: Omit<UpdateCategoryDto, 'id'>
   ) {
-    return await this.categoriesService.update(req.user, {
+    const updatedCategory = await this.categoriesService.update(req.user, {
       id,
       ...updateCategoryDto
     })
+
+    return {
+      code: 200,
+      message: 'Updated category successfully',
+      data: updatedCategory
+    }
   }
 
   @Delete(':id')
