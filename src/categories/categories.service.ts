@@ -1,8 +1,9 @@
+import { Injectable } from '@nestjs/common'
 import {
-  ConflictException,
-  Injectable,
-  NotFoundException
-} from '@nestjs/common'
+  CategoryNotBelongToUserException,
+  CategoryNotExistException,
+  DuplicatedCategoryException
+} from './dto/exceptions'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateCategoryDto } from './dto/create-category.dto'
@@ -11,7 +12,6 @@ import { Category } from './entities/category.entity'
 import initialCategories from './initialCategories.json'
 import { User } from '../users/entities/user.entity'
 import { omit } from 'lodash'
-import { ErrorMessage } from '../error/errorMessage'
 
 @Injectable()
 export class CategoriesService {
@@ -34,9 +34,7 @@ export class CategoriesService {
     })
 
     if (similarCategoryExists) {
-      throw new ConflictException(
-        'Category must have unique name - type - group'
-      )
+      throw new DuplicatedCategoryException()
     } else {
       return await this.categoryRepository.insert({
         ...createCategoryDto,
@@ -63,7 +61,7 @@ export class CategoriesService {
     })
 
     if (categoryToBeUpdated.user.id !== user.id) {
-      throw new NotFoundException('Cannot find the requested category')
+      throw new CategoryNotBelongToUserException()
     }
 
     const similarCategoryExists = await this.categoryRepository.findOne({
@@ -75,9 +73,7 @@ export class CategoriesService {
     })
 
     if (similarCategoryExists) {
-      throw new ConflictException(
-        'Category must have unique name - type - group'
-      )
+      throw new DuplicatedCategoryException()
     }
 
     return await this.categoryRepository.update(
@@ -90,7 +86,7 @@ export class CategoriesService {
     const categoryToBeDeleted = await this.categoryRepository.findOneBy({ id })
 
     if (!categoryToBeDeleted || categoryToBeDeleted.user.id !== user.id) {
-      throw new NotFoundException('Cannot find the requested category')
+      throw new CategoryNotBelongToUserException()
     }
 
     await this.categoryRepository.softDelete(id)
@@ -104,9 +100,9 @@ export class CategoriesService {
       }
     })
 
-    if (!categoryWithGivenId) throw new NotFoundException('Can not find transaction')
+    if (!categoryWithGivenId) throw new CategoryNotExistException()
     if (categoryWithGivenId.user.id !== user.id) {
-      throw new NotFoundException('Cannot find requested category')
+      throw new CategoryNotBelongToUserException()
     }
     return categoryWithGivenId
   }
@@ -159,8 +155,8 @@ export class CategoriesService {
           group,
           transaction
         }
-      } else throw new Error(ErrorMessage.AccessDenied)
+      } else throw new CategoryNotBelongToUserException()
     }
-    throw new Error(ErrorMessage.NotFoundCategory)
+    throw new CategoryNotExistException()
   }
 }
