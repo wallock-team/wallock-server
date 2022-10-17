@@ -30,13 +30,23 @@ export class CategoriesController {
     return await this.categoriesService.create(req.user, createCategoryDto)
   }
 
-  @Patch()
+  @Patch(':id')
   @UseGuards(JwtAuthGuard)
   async update(
     @Req() req: AuthenticatedRequest,
-    @Body() updateCategoryDto: UpdateCategoryDto
+    @Param('id') id: number,
+    @Body() updateCategoryDto: Omit<UpdateCategoryDto, 'id'>
   ) {
-    return await this.categoriesService.update(req.user, updateCategoryDto)
+    const updatedCategory = await this.categoriesService.update(req.user, {
+      id,
+      ...updateCategoryDto
+    })
+
+    return {
+      code: 200,
+      message: 'Updated category successfully',
+      data: updatedCategory
+    }
   }
 
   @Delete(':id')

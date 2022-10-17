@@ -1,15 +1,23 @@
-import { IsIn, IsNotEmpty } from 'class-validator'
+import { IsDefined, IsNumber } from 'class-validator'
 
 export class UpdateCategoryDto {
-  @IsNotEmpty()
+  @IsDefined({
+    message: 'Category ID must be provided'
+  })
+  @IsNumber(
+    {
+      allowNaN: false,
+      allowInfinity: false
+    },
+    {
+      message: 'Category ID must be a number'
+    }
+  )
   id: number
 
   name?: string
 
   group?: string
-
-  @IsIn(['income', 'expense'])
-  type?: 'income' | 'expense'
 
   icon?: string
 }
