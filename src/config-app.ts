@@ -2,9 +2,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
-import * as dotenv from 'dotenv'
-dotenv.config()
-
 export default function configApp(app: INestApplication) {
   return app
     .useGlobalPipes(new ValidationPipe({ transform: true }))
